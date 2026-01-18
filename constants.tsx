@@ -95,6 +95,15 @@ export const PUZZLE_LEVELS: PuzzleLevel[] = [
       { id: '2-3', text: "Kriteria penilaian meliputi kerapian meja, ketersediaan alat kebersihan, dan dekorasi pojok baca yang kreatif.", type: 'BODY' },
       { id: '2-4', text: "Hadiah diserahkan langsung oleh Pembina OSIS pada upacara bendera Senin pagi tadi.", type: 'TAIL' }
     ]
+  },
+  {
+    id: 'level-3',
+    fragments: [
+      { id: '3-1', text: "Sulap Sampah Plastik Jadi Kursi Estetik, Siswa SMPN 3 Bonang Tuai Pujian", type: 'TITLE' },
+      { id: '3-2', text: "BONANG - Kepedulian terhadap lingkungan ditunjukkan siswa SMPN 3 Bonang dengan mengubah ribuan botol plastik bekas menjadi perabotan sekolah yang bermanfaat.", type: 'LEAD' },
+      { id: '3-3', text: "Melalui teknik ecobrick, para siswa mengumpulkan sampah dari lingkungan sekitar lalu merangkainya menjadi kursi dan meja yang kokoh selama dua minggu terakhir.", type: 'BODY' },
+      { id: '3-4', text: "Hasil karya kreatif ini kini dipajang di taman sekolah dan dapat digunakan oleh seluruh warga sekolah saat jam istirahat.", type: 'TAIL' }
+    ]
   }
 ];
 
