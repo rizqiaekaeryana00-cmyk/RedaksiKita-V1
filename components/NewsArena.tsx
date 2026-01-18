@@ -52,7 +52,7 @@ const NewsArena: React.FC<NewsArenaProps> = ({ onBack, puzzleLevels }) => {
   if (!puzzleLevels[level]) return <div className="p-20 text-center font-black">BELUM ADA LEVEL PUZZLE.</div>;
 
   return (
-    <div className="h-[calc(100vh-80px)] bg-[#F8FAFC] p-4 flex flex-col items-center overflow-hidden">
+    <div className="h-full bg-[#F8FAFC] p-4 flex flex-col items-center overflow-hidden">
       {showInstructions && (
         <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 p-4">
           <div className="glass-card max-w-sm p-6 text-center bg-white rounded-3xl">

@@ -19,7 +19,7 @@ const Lobby: React.FC<LobbyProps> = ({ student, onNavigate }) => {
   }, []);
 
   return (
-    <div className="h-[calc(100vh-76px)] bg-white text-black p-4 md:p-6 flex flex-col relative overflow-hidden">
+    <div className="h-full bg-white text-black p-4 md:p-6 flex flex-col relative overflow-hidden">
       <div className="absolute top-10 right-10 text-7xl animate-bounce pointer-events-none opacity-10">👨‍💼</div>
       
       {/* Header Lobi - More Compact */}

@@ -28,7 +28,6 @@ const BriefingRoom: React.FC<BriefingRoomProps> = ({ onBack, lessons }) => {
   const current = lessons[activeIdx];
   const activeVideo = current?.videos?.[activeVideoIdx];
 
-  // Helper untuk mengubah URL YouTube biasa menjadi Embed
   const getEmbedUrl = (url: string) => {
     if (!url) return "";
     let videoId = "";
@@ -41,7 +40,7 @@ const BriefingRoom: React.FC<BriefingRoomProps> = ({ onBack, lessons }) => {
   if (!current) return <div className="p-20 text-center font-black">BELUM ADA MATERI.</div>;
 
   return (
-    <div className="h-[calc(100vh-80px)] bg-[#F1F5F9] p-4 flex flex-col items-center overflow-hidden">
+    <div className="h-full bg-[#F1F5F9] p-4 flex flex-col items-center overflow-hidden">
       {/* Header */}
       <div className="w-full max-w-5xl flex justify-between items-center mb-4 bg-white p-4 rounded-2xl border-4 border-black shadow-[6px_6px_0px_#000]">
         <button onClick={onBack} className="flex items-center space-x-2 text-black hover:text-[#FF3D00] transition-colors font-black uppercase text-xs group">

@@ -96,9 +96,9 @@ const App: React.FC = () => {
         );
       case 'INFO':
         return (
-          <div className="h-[calc(100vh-80px)] bg-slate-100 flex items-center justify-center p-6 overflow-hidden">
+          <div className="h-full bg-slate-100 flex items-center justify-center p-6 overflow-hidden">
             <div className="glass-card max-w-2xl p-8 md:p-12 text-center bg-white border-4 border-black shadow-[12px_12px_0px_#000] rounded-[2.5rem]">
-              <h2 className="text-3xl font-black uppercase mb-6 text-black italic italic tracking-tighter">Informasi Media</h2>
+              <h2 className="text-3xl font-black uppercase mb-6 text-black italic tracking-tighter">Informasi Media</h2>
               <div className="space-y-3 text-left font-bold mb-10 text-black leading-tight">
                 <p>📍 <span className="text-[#FF3D00]">Tujuan:</span> Melatih siswa SMP Kelas VII menulis teks berita sesuai struktur 5W+1H.</p>
                 <p>👩‍🏫 <span className="text-[#FF3D00]">Pembuat:</span> Rizqia Eka Eryana</p>

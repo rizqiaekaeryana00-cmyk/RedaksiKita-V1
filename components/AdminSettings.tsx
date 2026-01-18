@@ -33,7 +33,7 @@ const AdminSettings: React.FC<AdminSettingsProps> = (props) => {
   };
 
   return (
-    <div className="h-[calc(100vh-80px)] bg-slate-100 flex flex-col overflow-hidden">
+    <div className="h-full bg-slate-100 flex flex-col overflow-hidden">
       {/* Settings Header */}
       <div className="bg-white p-4 border-b-4 border-black flex justify-between items-center shadow-md z-10">
         <div className="flex items-center space-x-3">
