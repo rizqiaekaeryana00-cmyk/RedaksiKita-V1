@@ -54,7 +54,7 @@ const NewsArena: React.FC<NewsArenaProps> = ({ onBack }) => {
           <div className="glass-card max-w-sm p-6 text-center bg-white rounded-3xl">
             <Gamepad2 className="w-12 h-12 mx-auto text-red-500 mb-3" />
             <h2 className="text-xl font-black uppercase mb-2">Cara Bermain</h2>
-            <p className="font-bold mb-6 text-sm text-slate-700">Tarik dan pindahkan kotak teks. Susun sesuai Struktur: Judul -> Teras (Lead) -> Tubuh Berita.</p>
+            <p className="font-bold mb-6 text-sm text-slate-700">Tarik dan pindahkan kotak teks. Susun sesuai Struktur: Judul &rarr; Teras (Lead) &rarr; Tubuh Berita.</p>
             <button onClick={() => { sounds.click(); setShowInstructions(false); }} className="btn-primary w-full py-3 text-white font-black uppercase rounded-xl">Siap, Mulai!</button>
           </div>
         </motion.div>
