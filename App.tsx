@@ -14,6 +14,7 @@ import Navbar from './components/Navbar';
 import AdminSettings from './components/AdminSettings';
 import { LESSONS, QUIZ_QUESTIONS, PUZZLE_LEVELS, INVESTIGATION_FILES } from './constants';
 import { loadAppData, saveAppData } from './services/firebase';
+import { Copyright, Tv } from 'lucide-react';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<AppView>('LOGIN');
@@ -126,7 +127,7 @@ const App: React.FC = () => {
       {currentView !== 'LOGIN' && student && (
         <Navbar student={student} currentView={currentView} onLogout={handleLogout} onNavigate={setCurrentView} />
       )}
-      <main className="flex-1 flex flex-col">
+      <main className="flex-1 flex flex-col relative">
         <AnimatePresence mode="wait">
           <motion.div 
             key={currentView} 
@@ -138,6 +139,20 @@ const App: React.FC = () => {
             {renderView()}
           </motion.div>
         </AnimatePresence>
+
+        {/* PERSISTENT COPYRIGHT FOOTER */}
+        {currentView !== 'HOAX_SHOOTER' && (
+          <div className="fixed bottom-0 right-0 p-2 md:p-4 z-[999] pointer-events-none no-print">
+            <div className="bg-white/80 backdrop-blur-md border-2 border-black px-3 py-1.5 md:px-5 md:py-2 rounded-full shadow-lg flex items-center space-x-2">
+              <div className="bg-black p-1 rounded-full">
+                <Tv className="w-3 h-3 text-[#FF3D00]" />
+              </div>
+              <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-black">
+                REDaksiKITA_MPI_Rizqia Eka Eryana
+              </span>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

@@ -12,12 +12,16 @@
         --primary: #FF3D00;
         --secondary: #FFD600;
         --accent: #00E5FF;
-        --bg: #F8FAFC;
-        --text: #1E293B;
+        --bg: #F1F5F9;
+        --text: #0F172A;
+        --studio-dark: #1E293B;
       }
       body {
         font-family: 'Fredoka', sans-serif;
         background-color: var(--bg);
+        background-image: radial-gradient(var(--studio-dark) 0.5px, transparent 0.5px);
+        background-size: 24px 24px;
+        background-opacity: 0.05;
         color: var(--text);
         margin: 0;
         padding: 0;
@@ -26,10 +30,17 @@
         min-height: 100dvh;
       }
       
+      /* Studio Glass Effect */
+      .studio-glass {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        border: 4px solid #000;
+      }
+
       /* Perbaikan Scroll */
-      .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-      .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-      .custom-scrollbar::-webkit-scrollbar-thumb { background: #000; border-radius: 10px; }
+      .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+      .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+      .custom-scrollbar::-webkit-scrollbar-thumb { background: #000; border-radius: 0px; }
       
       .no-scrollbar::-webkit-scrollbar { display: none; }
       .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -37,20 +48,24 @@
       .news-ticker {
         white-space: nowrap;
         display: inline-block;
-        animation: ticker 30s linear infinite;
+        animation: ticker 40s linear infinite;
       }
       @keyframes ticker {
         0% { transform: translateX(100%); }
-        100% { transform: translateX(-150%); }
+        100% { transform: translateX(-200%); }
+      }
+
+      .blinking-dot {
+        animation: blink 1.5s ease-in-out infinite;
+      }
+      @keyframes blink {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.4; transform: scale(0.8); }
       }
       
-      /* Mencegah pemotongan pada elemen grid */
-      .grid { min-height: 0; min-width: 0; }
-      
-      /* Cetak yang lebih rapi */
       @media print {
         .no-print { display: none !important; }
-        body { background: white; }
+        body { background: white; background-image: none; }
       }
     </style>
   <script type="importmap">

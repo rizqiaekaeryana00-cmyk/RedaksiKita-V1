@@ -1,6 +1,7 @@
 {
-  "name": "REDaksi KITA - Petualangan Menulis Berita",
+  "name": "REDaksi KITA - MPI",
   "description": "Media pembelajaran interaktif untuk menguasai teks berita melalui simulasi ruang redaksi digital yang seru dan menantang.",
+  "author": "Rizqia Eka Eryana",
   "requestFramePermissions": [
     "camera",
     "microphone"
