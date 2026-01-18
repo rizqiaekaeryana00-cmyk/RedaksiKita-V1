@@ -2,25 +2,105 @@
 import { Question, NewsFragment, InvestigationData, Lesson, PuzzleLevel } from './types';
 
 export const INVESTIGATION_FILES: InvestigationData[] = [
+  // FAKTA (Berdasarkan teks berita Kompas.id)
   { 
     id: 'f1', 
     type: 'PHOTO', 
-    title: 'Foto Kantin', 
-    content: 'Foto menunjukkan menu nasi jagung sehat dengan stempel resmi sekolah.', 
+    title: 'Label Kalori Etalase', 
+    content: 'Foto menunjukkan label bertuliskan "250 kkal" pada porsi siomay di etalase kantin SMKN 57.', 
     isFact: true 
   },
   { 
     id: 'f2', 
     type: 'INTERVIEW', 
-    title: 'Wawancara Kepsek', 
-    content: '"Kami berencana memberikan subsidi, bukan gratis total," ujar Ibu Kepsek.', 
+    title: 'Rekaman Suara Ibu Nanik', 
+    content: '"Dulu saya jual maklor dan cilor, sekarang saya ganti jadi siomay dan jus buah agar lebih sehat," ujar Nanik.', 
     isFact: true 
   },
   { 
+    id: 'f3', 
+    type: 'PHOTO', 
+    title: 'Sabun Minyak Jelantah', 
+    content: 'Foto botol sabun cair hasil olahan limbah minyak goreng yang dikumpulkan siswa SMKN 57.', 
+    isFact: true 
+  },
+  { 
+    id: 'f4', 
+    type: 'DOCUMENT', 
+    title: 'SK Pokja Kantin', 
+    content: 'Surat Keputusan yang mencantumkan Gerald (18) sebagai anggota pengelola kantin dari unsur siswa.', 
+    isFact: true 
+  },
+  { 
+    id: 'f5', 
+    type: 'PHOTO', 
+    title: 'Standar Higiene Pedagang', 
+    content: 'Foto Ibu Nanik menggunakan masker, sarung tangan plastik, dan penutup kepala saat melayani siswa.', 
+    isFact: true 
+  },
+  { 
+    id: 'f6', 
+    type: 'DOCUMENT', 
+    title: 'Hasil Uji Lab Dinkes', 
+    content: 'Laporan Dinas Kesehatan Jakarta yang menguji sampel makanan kantin untuk akurasi informasi kalori.', 
+    isFact: true 
+  },
+  { 
+    id: 'f7', 
+    type: 'INTERVIEW', 
+    title: 'Kesaksian Tatia', 
+    content: '"Sekolah memastikan kualitas bahan baku. Kami mengolah sisa makanan menjadi kompos," tutur Tatia.', 
+    isFact: true 
+  },
+  { 
+    id: 'f8', 
+    type: 'DOCUMENT', 
+    title: 'Nota Belanja Kantin', 
+    content: 'Kuitansi pembelian makan siang seharga Rp 18.000, membuktikan harga tidak lebih dari Rp 20.000.', 
+    isFact: true 
+  },
+
+  // PENGECOH / HOAKS (Pernyataan yang salah atau bertentangan dengan berita)
+  { 
     id: 'h1', 
     type: 'DOCUMENT', 
-    title: 'Pesan Berantai', 
-    content: 'Pesan WA tanpa nama: "BESOK MAKAN GRATIS DI KANTIN! SEBARKAN!"', 
+    title: 'Pesan Berantai WA', 
+    content: 'HOAKS: "Kantin SMKN 57 sekarang gratis untuk umum setiap hari Jumat atas perintah Gubernur!"', 
+    isFact: false 
+  },
+  { 
+    id: 'h2', 
+    type: 'INTERVIEW', 
+    title: 'Komentar Pengunjung Palsu', 
+    content: 'SALAH: "Harga makanan naik jadi 50 ribu per porsi karena sertifikasi gizi sangat mahal."', 
+    isFact: false 
+  },
+  { 
+    id: 'h3', 
+    type: 'PHOTO', 
+    title: 'Foto Tersembunyi', 
+    content: 'FOTO PALSU: Menampilkan tumpukan minuman saset di belakang lemari Ibu Nanik (Padahal sudah dihapus).', 
+    isFact: false 
+  },
+  { 
+    id: 'h4', 
+    type: 'DOCUMENT', 
+    title: 'Laporan Ilegal', 
+    content: 'HOAKS: "Ditemukan penggunaan minyak jelantah berulang kali pada stan batagor di SMKN 57."', 
+    isFact: false 
+  },
+  { 
+    id: 'h5', 
+    type: 'INTERVIEW', 
+    title: 'Wawancara Gerald Palsu', 
+    content: 'SALAH: "Saya jadi anggota Pokja karena dibayar mahal oleh pihak sekolah untuk promosi."', 
+    isFact: false 
+  },
+  { 
+    id: 'h6', 
+    type: 'PHOTO', 
+    title: 'Menu Terlarang', 
+    content: 'FOTO EDITAN: Siswa sedang antre membeli maklor dan cilor di kantin sehat (Padahal sudah dilarang).', 
     isFact: false 
   }
 ];
