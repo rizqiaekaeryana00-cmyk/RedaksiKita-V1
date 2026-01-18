@@ -1,7 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, Save, Plus, Trash2, BookOpen, ClipboardCheck, Gamepad2, Search, Video, Youtube, List, X, Link as LinkIcon, CloudCheck, CloudOff, Loader2 } from 'lucide-react';
+import { 
+  Home, Save, Plus, Trash2, BookOpen, ClipboardCheck, Gamepad2, Search, 
+  Video, Youtube, List, X, Link as LinkIcon, CloudCheck, Loader2, Edit3, 
+  Check, AlertTriangle, FileText, Layers, Hash
+} from 'lucide-react';
 import { Lesson, Question, NewsFragment, InvestigationData, VideoItem, PuzzleLevel } from '../types';
 import { sounds } from '../services/audio';
 
@@ -21,8 +25,8 @@ const AdminSettings: React.FC<AdminSettingsProps> = (props) => {
   const [activeTab, setActiveTab] = useState<'LESSONS' | 'QUIZ' | 'PUZZLE' | 'INVESTIGATION'>('LESSONS');
   const [syncStatus, setSyncStatus] = useState<'IDLE' | 'SAVING' | 'SUCCESS' | 'ERROR'>('IDLE');
   const [lastSaved, setLastSaved] = useState<string>('');
+  const [editingId, setEditingId] = useState<string | number | null>(null);
 
-  // Efek untuk memantau perubahan data dan memberikan feedback visual
   useEffect(() => {
     if (syncStatus === 'SUCCESS') {
       const timer = setTimeout(() => setSyncStatus('IDLE'), 3000);
@@ -33,7 +37,6 @@ const AdminSettings: React.FC<AdminSettingsProps> = (props) => {
   const wrapUpdate = async (type: string, action: () => void) => {
     setSyncStatus('SAVING');
     action();
-    // Proses simpan biasanya cepat, kita beri delay sedikit agar user melihat transisi status
     setTimeout(() => {
       setSyncStatus('SUCCESS');
       setLastSaved(new Date().toLocaleTimeString());
@@ -41,18 +44,13 @@ const AdminSettings: React.FC<AdminSettingsProps> = (props) => {
   };
 
   const deleteItem = (type: string, id: string | number) => {
+    if (!window.confirm("Yakin ingin menghapus item ini? Data tidak bisa dikembalikan.")) return;
     sounds.wrong();
     wrapUpdate(type, () => {
       if (type === 'LESSONS') props.setLessons(props.lessons.filter(l => l.id !== id));
       if (type === 'QUIZ') props.setQuizzes(props.quizzes.filter(q => q.id !== id));
       if (type === 'INVESTIGATION') props.setInvestigations(props.investigations.filter(i => i.id !== id));
-      if (type === 'PUZZLE') props.setPuzzles(props.puzzles.filter((_, idx) => idx !== id));
-    });
-  };
-
-  const updateLessonVideos = (lessonId: string, videos: VideoItem[]) => {
-    wrapUpdate('LESSONS', () => {
-      props.setLessons(props.lessons.map(l => l.id === lessonId ? { ...l, videos } : l));
+      if (type === 'PUZZLE') props.setPuzzles(props.puzzles.filter(p => p.id !== id));
     });
   };
 
@@ -65,44 +63,44 @@ const AdminSettings: React.FC<AdminSettingsProps> = (props) => {
             <Save className="text-white w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl font-black uppercase tracking-tighter italic leading-none">Pusat <span className="text-purple-600">Konten Redaksi</span></h2>
+            <h2 className="text-xl font-black uppercase tracking-tighter italic leading-none">Editor <span className="text-purple-600">Utama Redaksi</span></h2>
             <div className="flex items-center mt-1">
-               <AnimatePresence mode="wait">
+              <AnimatePresence mode="wait">
                 {syncStatus === 'SAVING' && (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center text-[9px] font-black text-blue-600 uppercase italic">
-                    <Loader2 className="w-3 h-3 mr-1 animate-spin" /> Menyingkronkan ke Cloud...
+                    <Loader2 className="w-3 h-3 mr-1 animate-spin" /> Menyimpan Ke Cloud...
                   </motion.div>
                 )}
                 {syncStatus === 'SUCCESS' && (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center text-[9px] font-black text-green-600 uppercase italic">
-                    <CloudCheck className="w-3 h-3 mr-1" /> Berhasil Disimpan {lastSaved && `pukul ${lastSaved}`}
+                    <CloudCheck className="w-3 h-3 mr-1" /> Sinkron Berhasil {lastSaved && `(${lastSaved})`}
                   </motion.div>
                 )}
                 {syncStatus === 'IDLE' && (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center text-[9px] font-black text-slate-400 uppercase italic">
-                    Semua perubahan tersimpan otomatis
+                    Mode Editor Aktif
                   </motion.div>
                 )}
-               </AnimatePresence>
+              </AnimatePresence>
             </div>
           </div>
         </div>
-        <button onClick={props.onBack} className="btn-primary px-6 py-2 text-white font-black uppercase rounded-xl flex items-center shadow-sm">
-          <Home className="mr-2 w-4 h-4" /> Lobi
+        <button onClick={props.onBack} className="bg-black text-white px-6 py-2 font-black uppercase rounded-xl flex items-center shadow-sm border-2 border-white hover:bg-slate-900 transition-all">
+          <Home className="mr-2 w-4 h-4" /> Tutup
         </button>
       </div>
 
       {/* Tabs */}
       <div className="bg-white border-b-2 border-black flex overflow-x-auto no-scrollbar">
         {[
-          { id: 'LESSONS', label: 'Briefing (Materi)', icon: <BookOpen className="w-4 h-4" /> },
-          { id: 'QUIZ', label: 'Evaluasi (Kuis)', icon: <ClipboardCheck className="w-4 h-4" /> },
-          { id: 'PUZZLE', label: 'Arena (Puzzle)', icon: <Gamepad2 className="w-4 h-4" /> },
+          { id: 'LESSONS', label: 'Briefing', icon: <BookOpen className="w-4 h-4" /> },
+          { id: 'QUIZ', label: 'Evaluasi', icon: <ClipboardCheck className="w-4 h-4" /> },
+          { id: 'PUZZLE', label: 'Arena', icon: <Gamepad2 className="w-4 h-4" /> },
           { id: 'INVESTIGATION', label: 'Investigasi', icon: <Search className="w-4 h-4" /> },
         ].map(tab => (
           <button
             key={tab.id}
-            onClick={() => { sounds.click(); setActiveTab(tab.id as any); }}
+            onClick={() => { sounds.click(); setActiveTab(tab.id as any); setEditingId(null); }}
             className={`px-8 py-4 font-black uppercase text-[10px] md:text-xs flex items-center space-x-2 border-r-2 border-black transition-colors shrink-0 ${activeTab === tab.id ? 'bg-purple-600 text-white' : 'hover:bg-purple-50 text-black'}`}
           >
             {tab.icon} <span>{tab.label}</span>
@@ -110,176 +108,84 @@ const AdminSettings: React.FC<AdminSettingsProps> = (props) => {
         ))}
       </div>
 
-      {/* Content Area */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar bg-[#F8FAFC]">
+        {/* Tab: MATERI (LESSONS) */}
         {activeTab === 'LESSONS' && (
-          <div className="space-y-6">
-            <div className="bg-purple-100 p-4 rounded-2xl border-2 border-purple-600 border-dashed flex items-start space-x-3">
-              <Youtube className="w-6 h-6 text-red-600 shrink-0 mt-1" />
-              <div>
-                <p className="text-[10px] font-black text-purple-700 uppercase leading-none mb-1">Panduan Video</p>
-                <p className="text-xs font-bold text-purple-900 leading-tight">Masukkan link YouTube yang valid. Sistem akan otomatis memutar video tersebut di halaman materi siswa.</p>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 gap-8">
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 gap-6">
               {props.lessons.map(lesson => (
-                <div key={lesson.id} className="bg-white p-6 md:p-8 rounded-[2.5rem] border-4 border-black flex flex-col space-y-6 shadow-[8px_8px_0px_#000] relative group">
-                  <div className="flex justify-between items-start border-b-2 border-slate-100 pb-4">
-                    <div className="flex-1">
-                      <h4 className="font-black uppercase text-xl italic text-black leading-none mb-2">{lesson.title}</h4>
-                      <p className="text-[11px] font-bold text-slate-500 line-clamp-2 italic">"{lesson.content}"</p>
-                    </div>
-                    <button 
-                      onClick={() => deleteItem('LESSONS', lesson.id)} 
-                      className="p-3 bg-red-50 text-red-600 border-2 border-black rounded-xl hover:bg-red-500 hover:text-white transition-colors"
-                      title="Hapus Materi"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
-                  </div>
-                  
-                  {/* Playlist Manager */}
-                  <div className="bg-slate-50 p-6 rounded-3xl border-2 border-black border-dashed space-y-4">
-                    <div className="flex justify-between items-center">
-                      <h5 className="text-xs font-black uppercase text-slate-500 flex items-center italic">
-                        <Youtube className="w-4 h-4 mr-2 text-red-600" /> Pengaturan Playlist Video
-                      </h5>
-                      <span className="text-[10px] font-black text-slate-400 bg-white px-2 py-1 rounded-lg border border-black/10">
-                        {lesson.videos.length} VIDEO AKTIF
-                      </span>
-                    </div>
-
-                    <div className="space-y-4">
-                      {lesson.videos.map((vid, vIdx) => (
-                        <div key={vid.id} className="bg-white p-5 rounded-2xl border-2 border-black shadow-[4px_4px_0px_#000] relative group/video">
-                          <div className="absolute -top-3 -left-3 w-8 h-8 bg-black text-white rounded-full flex items-center justify-center font-black text-xs border-2 border-white shadow-md z-10">
-                            {vIdx + 1}
-                          </div>
-                          
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-1.5">
-                              <label className="text-[9px] font-black uppercase text-slate-400 ml-1 tracking-widest flex items-center">
-                                <Video className="w-3 h-3 mr-1" /> Judul Tampilan
-                              </label>
-                              <input 
-                                className="w-full p-3 rounded-xl border-2 border-slate-100 bg-slate-50 font-bold text-xs outline-none focus:border-red-500 focus:bg-white transition-all placeholder:text-slate-300" 
-                                value={vid.title} 
-                                placeholder="Contoh: Langkah-langkah Wawancara"
-                                onChange={(e) => {
-                                  const newVids = [...lesson.videos];
-                                  newVids[vIdx].title = e.target.value;
-                                  updateLessonVideos(lesson.id, newVids);
-                                }}
-                              />
-                            </div>
-                            <div className="space-y-1.5">
-                              <label className="text-[9px] font-black uppercase text-slate-400 ml-1 tracking-widest flex items-center">
-                                <LinkIcon className="w-3 h-3 mr-1" /> Link URL YouTube
-                              </label>
-                              <div className="relative">
-                                <input 
-                                  className="w-full p-3 rounded-xl border-2 border-slate-100 bg-slate-50 font-mono text-[10px] text-blue-600 outline-none focus:border-red-500 focus:bg-white transition-all pr-10 placeholder:text-slate-300" 
-                                  value={vid.url} 
-                                  placeholder="https://www.youtube.com/watch?v=..."
-                                  onChange={(e) => {
-                                    const newVids = [...lesson.videos];
-                                    newVids[vIdx].url = e.target.value;
-                                    updateLessonVideos(lesson.id, newVids);
-                                  }}
-                                />
-                                <Youtube className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-red-500 opacity-20" />
-                              </div>
-                            </div>
-                          </div>
-                          <button 
-                            onClick={() => {
-                              sounds.wrong();
-                              updateLessonVideos(lesson.id, lesson.videos.filter((_, idx) => idx !== vIdx));
-                            }} 
-                            className="absolute -top-2 -right-2 p-2 bg-red-50 text-red-600 rounded-xl border border-black hover:bg-red-600 hover:text-white transition-all shadow-sm opacity-0 group-hover/video:opacity-100"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      ))}
-
-                      <button 
-                        onClick={() => {
-                          sounds.click();
-                          updateLessonVideos(lesson.id, [...lesson.videos, { id: Date.now().toString(), title: "", url: "" }]);
-                        }}
-                        className="w-full py-5 bg-white border-4 border-black border-dashed rounded-[1.5rem] text-[10px] font-black uppercase flex items-center justify-center hover:bg-red-50 hover:text-red-600 hover:border-red-600 transition-all group/add"
-                      >
-                        <Plus className="w-5 h-5 mr-2" /> Tambah Video Ke Playlist
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <LessonEditor 
+                  key={lesson.id} 
+                  lesson={lesson} 
+                  onUpdate={(updated) => wrapUpdate('LESSONS', () => props.setLessons(props.lessons.map(l => l.id === lesson.id ? updated : l)))}
+                  onDelete={() => deleteItem('LESSONS', lesson.id)}
+                />
               ))}
+              <AddButton label="Tambah Modul Materi" onClick={() => {
+                const newLesson: Lesson = { id: Date.now().toString(), title: "Modul Baru", content: "Isi materi di sini...", videos: [], meta: "Tips Redaktur" };
+                props.setLessons([...props.lessons, newLesson]);
+              }} />
             </div>
-            <AddLessonForm onAdd={(l) => {
-               setSyncStatus('SAVING');
-               props.setLessons([...props.lessons, l]);
-               setTimeout(() => setSyncStatus('SUCCESS'), 800);
-            }} />
           </div>
         )}
 
-        {activeTab === 'PUZZLE' && (
-          <div className="space-y-4">
-             <h3 className="font-black uppercase text-black italic">Arena Puzzle (Level)</h3>
-             <div className="grid grid-cols-1 gap-4">
-                {props.puzzles.map((level, idx) => (
-                  <div key={level.id} className="bg-white p-4 rounded-2xl border-4 border-black flex justify-between items-center shadow-sm">
-                    <div>
-                      <p className="font-black text-sm mb-1 uppercase tracking-tight">Level {idx + 1}</p>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase italic">{level.fragments.length} Fragmen Berita</p>
-                    </div>
-                    <button onClick={() => deleteItem('PUZZLE', idx)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg"><Trash2 className="w-5 h-5" /></button>
-                  </div>
-                ))}
-             </div>
-          </div>
-        )}
-
+        {/* Tab: EVALUASI (QUIZ) */}
         {activeTab === 'QUIZ' && (
-          <div className="space-y-4">
-            <h3 className="font-black uppercase text-black italic">Daftar Soal Kuis</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {props.quizzes.map(quiz => (
-                <div key={quiz.id} className="bg-white p-5 rounded-2xl border-4 border-black flex justify-between items-center shadow-sm">
-                  <div>
-                    <p className="font-black text-sm mb-2">{quiz.question}</p>
-                    <p className="text-[10px] bg-green-100 text-green-700 px-3 py-1 rounded-full font-black inline-block uppercase">Benar: {quiz.options[quiz.correctAnswer]}</p>
-                  </div>
-                  <button onClick={() => deleteItem('QUIZ', quiz.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg"><Trash2 className="w-5 h-5" /></button>
-                </div>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {props.quizzes.map((quiz, qIdx) => (
+                <QuizEditor 
+                  key={quiz.id} 
+                  quiz={quiz} 
+                  onUpdate={(updated) => wrapUpdate('QUIZ', () => props.setQuizzes(props.quizzes.map(q => q.id === quiz.id ? updated : q)))}
+                  onDelete={() => deleteItem('QUIZ', quiz.id)}
+                />
               ))}
+              <AddButton label="Tambah Soal Kuis" onClick={() => {
+                const newQuiz: Question = { id: Date.now(), question: "Pertanyaan Baru?", options: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"], correctAnswer: 0, explanation: "Penjelasan kebenaran fakta." };
+                props.setQuizzes([...props.quizzes, newQuiz]);
+              }} />
             </div>
           </div>
         )}
 
+        {/* Tab: INVESTIGASI */}
         {activeTab === 'INVESTIGATION' && (
-          <div className="space-y-4">
-            <h3 className="font-black uppercase text-black italic">Daftar Bukti Investigasi</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {props.investigations.map(inv => (
-                <div key={inv.id} className="bg-white p-4 rounded-2xl border-4 border-black flex justify-between items-center shadow-sm">
-                  <div className="flex items-center space-x-3">
-                    <div className={`p-3 rounded-xl border-2 border-black ${inv.isFact ? 'bg-green-100' : 'bg-red-100'}`}>
-                        {inv.type === 'PHOTO' && <Search className="w-4 h-4" />}
-                        {inv.type === 'INTERVIEW' && <Video className="w-4 h-4" />}
-                        {inv.type === 'DOCUMENT' && <List className="w-4 h-4" />}
-                    </div>
-                    <div>
-                      <p className="font-black text-sm uppercase leading-none mb-1">{inv.title}</p>
-                      <p className={`text-[8px] font-black px-2 py-0.5 rounded-full inline-block border border-black ${inv.isFact ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>{inv.isFact ? 'FAKTA' : 'HOAKS'}</p>
-                    </div>
-                  </div>
-                  <button onClick={() => deleteItem('INVESTIGATION', inv.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg"><Trash2 className="w-5 h-5" /></button>
-                </div>
+                <InvestigationEditor 
+                  key={inv.id} 
+                  data={inv} 
+                  onUpdate={(updated) => wrapUpdate('INVESTIGATION', () => props.setInvestigations(props.investigations.map(i => i.id === inv.id ? updated : i)))}
+                  onDelete={() => deleteItem('INVESTIGATION', inv.id)}
+                />
               ))}
+              <AddButton label="Tambah Bukti Investigasi" onClick={() => {
+                const newInv: InvestigationData = { id: Date.now().toString(), title: "Bukti Baru", type: 'PHOTO', content: "Deskripsi bukti...", isFact: true };
+                props.setInvestigations([...props.investigations, newInv]);
+              }} />
+            </div>
+          </div>
+        )}
+
+        {/* Tab: PUZZLE ARENA */}
+        {activeTab === 'PUZZLE' && (
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 gap-8">
+              {props.puzzles.map((level, pIdx) => (
+                <PuzzleEditor 
+                  key={level.id} 
+                  level={level} 
+                  index={pIdx}
+                  onUpdate={(updated) => wrapUpdate('PUZZLE', () => props.setPuzzles(props.puzzles.map(p => p.id === level.id ? updated : p)))}
+                  onDelete={() => deleteItem('PUZZLE', level.id)}
+                />
+              ))}
+              <AddButton label="Tambah Level Puzzle Baru" onClick={() => {
+                const newLevel: PuzzleLevel = { id: Date.now().toString(), fragments: [{ id: Date.now().toString(), text: "Fragmen Baru", type: 'TITLE' }] };
+                props.setPuzzles([...props.puzzles, newLevel]);
+              }} />
             </div>
           </div>
         )}
@@ -288,37 +194,216 @@ const AdminSettings: React.FC<AdminSettingsProps> = (props) => {
   );
 };
 
-const AddLessonForm = ({ onAdd }: { onAdd: (l: Lesson) => void }) => {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [meta, setMeta] = useState('');
+// --- SUB-COMPONENTS EDITOR ---
 
-  const submit = () => {
-    if (title && content) {
-      sounds.success();
-      onAdd({ 
-        id: Date.now().toString(), 
-        title, 
-        content, 
-        videos: [], 
-        meta: meta || "Pesan Redaktur" 
-      });
-      setTitle(''); setContent(''); setMeta('');
-    }
-  };
+const AddButton = ({ label, onClick }: any) => (
+  <button onClick={() => { sounds.click(); onClick(); }} className="h-full min-h-[150px] bg-white border-4 border-black border-dashed rounded-[2rem] flex flex-col items-center justify-center space-y-2 hover:bg-purple-50 hover:border-purple-600 hover:text-purple-600 transition-all group">
+    <Plus className="w-10 h-10 group-hover:scale-125 transition-transform" />
+    <span className="font-black uppercase text-xs">{label}</span>
+  </button>
+);
+
+// Fix: Correctly define prop types and use React.FC to handle 'key' and async 'onUpdate'
+const LessonEditor: React.FC<{ 
+  lesson: Lesson, 
+  onUpdate: (l: Lesson) => void | Promise<void>, 
+  onDelete: () => void 
+}> = ({ lesson, onUpdate, onDelete }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [draft, setDraft] = useState(lesson);
 
   return (
-    <div className="bg-purple-50 p-8 rounded-[3rem] border-4 border-purple-600 border-dashed space-y-4 shadow-inner">
-      <div className="flex items-center space-x-2 text-purple-600 mb-2">
-        <Plus className="w-6 h-6" />
-        <h4 className="font-black uppercase text-sm tracking-tighter">Tambah Materi Baru</h4>
+    <div className="bg-white p-6 rounded-[2.5rem] border-4 border-black shadow-[8px_8px_0px_#000] space-y-4">
+      <div className="flex justify-between items-center border-b-2 border-slate-100 pb-3">
+        <div className="flex items-center space-x-3">
+          <BookOpen className="text-purple-600 w-5 h-5" />
+          <h4 className="font-black uppercase text-sm italic">{draft.title}</h4>
+        </div>
+        <div className="flex space-x-2">
+          <button onClick={() => { sounds.click(); if(isEditing) onUpdate(draft); setIsEditing(!isEditing); }} className={`p-2 rounded-lg border-2 border-black ${isEditing ? 'bg-green-500 text-white' : 'bg-slate-100'}`}>
+            {isEditing ? <Check className="w-4 h-4" /> : <Edit3 className="w-4 h-4" />}
+          </button>
+          <button onClick={onDelete} className="p-2 bg-red-50 text-red-600 border-2 border-black rounded-lg hover:bg-red-500 hover:text-white"><Trash2 className="w-4 h-4" /></button>
+        </div>
       </div>
-      <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Judul Modul..." className="w-full p-4 border-4 border-black rounded-2xl font-bold text-sm shadow-[2px_2px_0px_#000]" />
-      <textarea value={content} onChange={e => setContent(e.target.value)} placeholder="Isi materi lengkap..." rows={4} className="w-full p-4 border-4 border-black rounded-2xl font-bold text-sm shadow-[2px_2px_0px_#000]" />
-      <input value={meta} onChange={e => setMeta(e.target.value)} placeholder="Tips Redaktur..." className="w-full p-4 border-4 border-black rounded-2xl font-bold text-sm shadow-[2px_2px_0px_#000]" />
-      <button onClick={submit} className="bg-purple-600 text-white w-full py-4 rounded-2xl font-black uppercase flex items-center justify-center shadow-[4px_4px_0px_#000] active:translate-y-1 active:shadow-none transition-all">
-        <Save className="mr-2" /> Publikasikan ke Siswa
-      </button>
+      
+      {isEditing ? (
+        <div className="space-y-4">
+          <input className="w-full p-3 border-2 border-black rounded-xl font-bold" value={draft.title} onChange={e => setDraft({...draft, title: e.target.value})} placeholder="Judul Modul" />
+          <textarea className="w-full p-3 border-2 border-black rounded-xl font-bold text-sm" rows={4} value={draft.content} onChange={e => setDraft({...draft, content: e.target.value})} placeholder="Isi materi..." />
+          <div className="bg-slate-50 p-4 rounded-xl space-y-3">
+             <p className="text-[10px] font-black uppercase text-slate-400">Playlist Video (YouTube)</p>
+             {draft.videos.map((vid, idx) => (
+               <div key={vid.id} className="flex gap-2">
+                 <input className="flex-1 p-2 border-2 border-slate-200 rounded-lg text-xs" value={vid.title} onChange={e => {
+                   const v = [...draft.videos]; v[idx].title = e.target.value; setDraft({...draft, videos: v});
+                 }} placeholder="Judul Video" />
+                 <input className="flex-1 p-2 border-2 border-slate-200 rounded-lg text-xs" value={vid.url} onChange={e => {
+                   const v = [...draft.videos]; v[idx].url = e.target.value; setDraft({...draft, videos: v});
+                 }} placeholder="Link YouTube" />
+                 <button onClick={() => { const v = draft.videos.filter((_, i) => i !== idx); setDraft({...draft, videos: v}); }} className="p-2 text-red-500"><Trash2 className="w-4 h-4" /></button>
+               </div>
+             ))}
+             <button onClick={() => setDraft({...draft, videos: [...draft.videos, {id: Date.now().toString(), title: "", url: ""}]})} className="w-full py-2 bg-white border-2 border-dashed border-black rounded-lg text-[10px] font-black uppercase">+ Video</button>
+          </div>
+        </div>
+      ) : (
+        <p className="text-xs font-bold text-slate-500 italic line-clamp-3">"{draft.content}"</p>
+      )}
+    </div>
+  );
+};
+
+// Fix: Correctly define prop types and use React.FC to handle 'key' and async 'onUpdate'
+const QuizEditor: React.FC<{ 
+  quiz: Question, 
+  onUpdate: (q: Question) => void | Promise<void>, 
+  onDelete: () => void 
+}> = ({ quiz, onUpdate, onDelete }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [draft, setDraft] = useState(quiz);
+
+  return (
+    <div className="bg-white p-6 rounded-[2rem] border-4 border-black shadow-[6px_6px_0px_#000] space-y-4">
+      <div className="flex justify-between items-start">
+        <h4 className="font-black text-xs uppercase text-slate-400">Soal Kuis</h4>
+        <div className="flex space-x-1">
+          <button onClick={() => { sounds.click(); if(isEditing) onUpdate(draft); setIsEditing(!isEditing); }} className="p-1.5 bg-slate-50 border-2 border-black rounded-lg">
+            {isEditing ? <Check className="w-3 h-3 text-green-600" /> : <Edit3 className="w-3 h-3" />}
+          </button>
+          <button onClick={onDelete} className="p-1.5 bg-red-50 text-red-600 border-2 border-black rounded-lg"><Trash2 className="w-3 h-3" /></button>
+        </div>
+      </div>
+
+      {isEditing ? (
+        <div className="space-y-3">
+          <textarea className="w-full p-2 border-2 border-black rounded-xl font-bold text-xs" value={draft.question} onChange={e => setDraft({...draft, question: e.target.value})} />
+          <div className="grid grid-cols-1 gap-2">
+            {draft.options.map((opt, i) => (
+              <div key={i} className="flex items-center space-x-2">
+                <input type="radio" checked={draft.correctAnswer === i} onChange={() => setDraft({...draft, correctAnswer: i})} />
+                <input className="flex-1 p-2 border-2 border-slate-100 rounded-lg text-[10px]" value={opt} onChange={e => {
+                  const o = [...draft.options]; o[i] = e.target.value; setDraft({...draft, options: o});
+                }} />
+              </div>
+            ))}
+          </div>
+          <input className="w-full p-2 border-2 border-slate-100 rounded-lg text-[10px] italic" value={draft.explanation} onChange={e => setDraft({...draft, explanation: e.target.value})} placeholder="Penjelasan jawaban..." />
+        </div>
+      ) : (
+        <div className="space-y-2">
+          <p className="font-black text-sm tracking-tight leading-tight">{draft.question}</p>
+          <p className="text-[9px] font-black uppercase text-green-600 bg-green-50 px-2 py-1 rounded inline-block border border-green-200">Jawaban: {draft.options[draft.correctAnswer]}</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Fix: Correctly define prop types and use React.FC to handle 'key' and async 'onUpdate'
+const InvestigationEditor: React.FC<{ 
+  data: InvestigationData, 
+  onUpdate: (i: InvestigationData) => void | Promise<void>, 
+  onDelete: () => void 
+}> = ({ data, onUpdate, onDelete }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [draft, setDraft] = useState(data);
+
+  return (
+    <div className={`bg-white p-5 rounded-2xl border-4 border-black shadow-[4px_4px_0px_#000] space-y-4 ${!draft.isFact ? 'border-red-500' : 'border-black'}`}>
+      <div className="flex justify-between items-center">
+        <div className="flex space-x-2">
+          <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase text-white ${draft.isFact ? 'bg-green-500' : 'bg-red-500'}`}>{draft.isFact ? 'FAKTA' : 'HOAKS'}</span>
+          <span className="bg-slate-100 px-2 py-0.5 rounded text-[8px] font-black uppercase text-slate-500">{draft.type}</span>
+        </div>
+        <div className="flex space-x-1">
+          <button onClick={() => { sounds.click(); if(isEditing) onUpdate(draft); setIsEditing(!isEditing); }} className="p-1.5 bg-slate-50 border-2 border-black rounded-lg">
+            {isEditing ? <Check className="w-3 h-3 text-green-600" /> : <Edit3 className="w-3 h-3" />}
+          </button>
+          <button onClick={onDelete} className="p-1.5 bg-red-50 text-red-600 border-2 border-black rounded-lg"><Trash2 className="w-3 h-3" /></button>
+        </div>
+      </div>
+
+      {isEditing ? (
+        <div className="space-y-2">
+          <input className="w-full p-2 border-2 border-black rounded-lg font-black text-xs" value={draft.title} onChange={e => setDraft({...draft, title: e.target.value})} placeholder="Judul Bukti" />
+          <textarea className="w-full p-2 border-2 border-slate-100 rounded-lg text-[10px]" rows={2} value={draft.content} onChange={e => setDraft({...draft, content: e.target.value})} placeholder="Isi Bukti..." />
+          <div className="flex gap-2">
+            <select className="flex-1 p-2 border-2 border-slate-100 rounded-lg text-[10px]" value={draft.type} onChange={e => setDraft({...draft, type: e.target.value as any})}>
+              <option value="PHOTO">PHOTO</option>
+              <option value="INTERVIEW">INTERVIEW</option>
+              <option value="DOCUMENT">DOCUMENT</option>
+            </select>
+            <button onClick={() => setDraft({...draft, isFact: !draft.isFact})} className={`flex-1 p-2 rounded-lg text-[10px] font-black uppercase ${draft.isFact ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+              {draft.isFact ? 'Jadikan Hoaks' : 'Jadikan Fakta'}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div>
+          <h5 className="font-black text-xs uppercase italic">{draft.title}</h5>
+          <p className="text-[10px] font-bold text-slate-400 mt-1 line-clamp-2">"{draft.content}"</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Fix: Correctly define prop types and use React.FC to handle 'key' and async 'onUpdate'
+const PuzzleEditor: React.FC<{ 
+  level: PuzzleLevel, 
+  index: number, 
+  onUpdate: (p: PuzzleLevel) => void | Promise<void>, 
+  onDelete: () => void 
+}> = ({ level, index, onUpdate, onDelete }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [draft, setDraft] = useState(level);
+
+  return (
+    <div className="bg-white p-6 rounded-[2.5rem] border-4 border-black shadow-[8px_8px_0px_#000] space-y-6">
+      <div className="flex justify-between items-center border-b-2 border-slate-100 pb-3">
+        <h4 className="font-black uppercase text-sm italic">Puzzle Level {index + 1}</h4>
+        <div className="flex space-x-2">
+          <button onClick={() => { sounds.click(); if(isEditing) onUpdate(draft); setIsEditing(!isEditing); }} className={`p-2 rounded-lg border-2 border-black ${isEditing ? 'bg-green-500 text-white' : 'bg-slate-100'}`}>
+            {isEditing ? <Check className="w-4 h-4" /> : <Edit3 className="w-4 h-4" />}
+          </button>
+          <button onClick={onDelete} className="p-2 bg-red-50 text-red-600 border-2 border-black rounded-lg hover:bg-red-500 hover:text-white"><Trash2 className="w-4 h-4" /></button>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        {draft.fragments.map((frag, fIdx) => (
+          <div key={frag.id} className="bg-slate-50 p-4 rounded-xl border-2 border-black flex items-start gap-4">
+            <div className="bg-black text-white w-6 h-6 rounded-lg flex items-center justify-center font-black text-[10px] shrink-0">{fIdx + 1}</div>
+            {isEditing ? (
+              <div className="flex-1 space-y-2">
+                <textarea className="w-full p-2 border-2 border-slate-200 rounded-lg text-xs font-bold" value={frag.text} onChange={e => {
+                  const f = [...draft.fragments]; f[fIdx].text = e.target.value; setDraft({...draft, fragments: f});
+                }} />
+                <div className="flex justify-between items-center">
+                  <select className="p-1 border-2 border-slate-200 rounded-lg text-[9px] font-black uppercase" value={frag.type} onChange={e => {
+                    const f = [...draft.fragments]; f[fIdx].type = e.target.value as any; setDraft({...draft, fragments: f});
+                  }}>
+                    <option value="TITLE">TITLE</option>
+                    <option value="LEAD">LEAD (TERAS)</option>
+                    <option value="BODY">BODY (TUBUH)</option>
+                    <option value="TAIL">TAIL (EKOR)</option>
+                  </select>
+                  <button onClick={() => { const f = draft.fragments.filter((_, i) => i !== fIdx); setDraft({...draft, fragments: f}); }} className="text-red-500 p-1"><Trash2 className="w-4 h-4" /></button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex-1">
+                <span className="text-[8px] font-black uppercase bg-black text-white px-1.5 py-0.5 rounded mb-1 inline-block">{frag.type}</span>
+                <p className="text-xs font-bold text-slate-800 leading-tight">{frag.text}</p>
+              </div>
+            )}
+          </div>
+        ))}
+        {isEditing && (
+          <button onClick={() => setDraft({...draft, fragments: [...draft.fragments, {id: Date.now().toString(), text: "Teks baru...", type: 'BODY'}]})} className="w-full py-3 bg-white border-2 border-dashed border-black rounded-xl text-[10px] font-black uppercase">+ Fragmen Berita</button>
+        )}
+      </div>
     </div>
   );
 };
