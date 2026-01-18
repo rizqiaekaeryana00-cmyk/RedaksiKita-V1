@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AppView, Student, Lesson, Question, NewsFragment, InvestigationData } from './types';
+import { AppView, Student, Lesson, Question, NewsFragment, InvestigationData, PuzzleLevel } from './types';
 import Login from './components/Login';
 import Lobby from './components/Lobby';
 import BriefingRoom from './components/BriefingRoom';
@@ -23,7 +23,7 @@ const App: React.FC = () => {
   // State Konten
   const [lessons, setLessons] = useState<Lesson[]>(LESSONS);
   const [quizzes, setQuizzes] = useState<Question[]>(QUIZ_QUESTIONS);
-  const [puzzles, setPuzzles] = useState<NewsFragment[][]>(PUZZLE_LEVELS);
+  const [puzzles, setPuzzles] = useState<PuzzleLevel[]>(PUZZLE_LEVELS);
   const [investigations, setInvestigations] = useState<InvestigationData[]>(INVESTIGATION_FILES);
 
   // Load data dari Firebase saat startup

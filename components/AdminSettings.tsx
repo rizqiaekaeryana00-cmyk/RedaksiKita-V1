@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Home, Save, Plus, Trash2, BookOpen, ClipboardCheck, Gamepad2, Search, Video, Youtube, List, X, Link as LinkIcon } from 'lucide-react';
-import { Lesson, Question, NewsFragment, InvestigationData, VideoItem } from '../types';
+import { Lesson, Question, NewsFragment, InvestigationData, VideoItem, PuzzleLevel } from '../types';
 import { sounds } from '../services/audio';
 
 interface AdminSettingsProps {
@@ -10,8 +10,8 @@ interface AdminSettingsProps {
   setLessons: (l: Lesson[]) => void;
   quizzes: Question[];
   setQuizzes: (q: Question[]) => void;
-  puzzles: NewsFragment[][];
-  setPuzzles: (p: NewsFragment[][]) => void;
+  puzzles: PuzzleLevel[];
+  setPuzzles: (p: PuzzleLevel[]) => void;
   investigations: InvestigationData[];
   setInvestigations: (i: InvestigationData[]) => void;
   onBack: () => void;
@@ -94,7 +94,7 @@ const AdminSettings: React.FC<AdminSettingsProps> = (props) => {
                     </button>
                   </div>
                   
-                  {/* Playlist Manager - Enhanced UI */}
+                  {/* Playlist Manager */}
                   <div className="bg-slate-50 p-6 rounded-3xl border-2 border-black border-dashed space-y-4">
                     <div className="flex justify-between items-center">
                       <h5 className="text-xs font-black uppercase text-slate-500 flex items-center italic">
@@ -108,7 +108,6 @@ const AdminSettings: React.FC<AdminSettingsProps> = (props) => {
                     <div className="space-y-4">
                       {lesson.videos.map((vid, vIdx) => (
                         <div key={vid.id} className="bg-white p-5 rounded-2xl border-2 border-black shadow-[4px_4px_0px_#000] relative group/video">
-                          {/* Number Badge */}
                           <div className="absolute -top-3 -left-3 w-8 h-8 bg-black text-white rounded-full flex items-center justify-center font-black text-xs border-2 border-white shadow-md z-10">
                             {vIdx + 1}
                           </div>
@@ -148,15 +147,12 @@ const AdminSettings: React.FC<AdminSettingsProps> = (props) => {
                               </div>
                             </div>
                           </div>
-                          
-                          {/* Delete Video Button */}
                           <button 
                             onClick={() => {
                               sounds.wrong();
                               updateLessonVideos(lesson.id, lesson.videos.filter((_, idx) => idx !== vIdx));
                             }} 
                             className="absolute -top-2 -right-2 p-2 bg-red-50 text-red-600 rounded-xl border border-black hover:bg-red-600 hover:text-white transition-all shadow-sm opacity-0 group-hover/video:opacity-100"
-                            title="Hapus Video"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -170,7 +166,7 @@ const AdminSettings: React.FC<AdminSettingsProps> = (props) => {
                         }}
                         className="w-full py-5 bg-white border-4 border-black border-dashed rounded-[1.5rem] text-[10px] font-black uppercase flex items-center justify-center hover:bg-red-50 hover:text-red-600 hover:border-red-600 transition-all group/add"
                       >
-                        <Plus className="w-5 h-5 mr-2 group-hover/add:scale-125 transition-transform" /> Tambah Video Ke Playlist
+                        <Plus className="w-5 h-5 mr-2" /> Tambah Video Ke Playlist
                       </button>
                     </div>
                   </div>
@@ -178,6 +174,23 @@ const AdminSettings: React.FC<AdminSettingsProps> = (props) => {
               ))}
             </div>
             <AddLessonForm onAdd={(l) => props.setLessons([...props.lessons, l])} />
+          </div>
+        )}
+
+        {activeTab === 'PUZZLE' && (
+          <div className="space-y-4">
+             <h3 className="font-black uppercase text-black italic">Arena Puzzle (Level)</h3>
+             <div className="grid grid-cols-1 gap-4">
+                {props.puzzles.map((level, idx) => (
+                  <div key={level.id} className="bg-white p-4 rounded-2xl border-4 border-black flex justify-between items-center shadow-sm">
+                    <div>
+                      <p className="font-black text-sm mb-1 uppercase tracking-tight">Level {idx + 1}</p>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase italic">{level.fragments.length} Fragmen Berita</p>
+                    </div>
+                    <button onClick={() => deleteItem('PUZZLE', idx)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg"><Trash2 className="w-5 h-5" /></button>
+                  </div>
+                ))}
+             </div>
           </div>
         )}
 

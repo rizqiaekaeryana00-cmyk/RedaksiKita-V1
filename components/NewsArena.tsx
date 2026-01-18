@@ -2,12 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, Reorder } from 'framer-motion';
 import { Home, Gamepad2, RotateCcw, AlertCircle, CheckCircle2, Info, ArrowRight } from 'lucide-react';
-import { NewsFragment } from '../types';
+import { NewsFragment, PuzzleLevel } from '../types';
 import { sounds } from '../services/audio';
 
 interface NewsArenaProps {
   onBack: () => void;
-  puzzleLevels: NewsFragment[][];
+  puzzleLevels: PuzzleLevel[];
 }
 
 const NewsArena: React.FC<NewsArenaProps> = ({ onBack, puzzleLevels }) => {
@@ -19,14 +19,15 @@ const NewsArena: React.FC<NewsArenaProps> = ({ onBack, puzzleLevels }) => {
 
   useEffect(() => {
     if (puzzleLevels[level]) {
-      const shuffled = [...puzzleLevels[level]].sort(() => Math.random() - 0.5);
+      // Akses properti .fragments dari objek level
+      const shuffled = [...puzzleLevels[level].fragments].sort(() => Math.random() - 0.5);
       setFragments(shuffled);
       setIsCorrect(null);
     }
   }, [level, puzzleLevels]);
 
   const checkSolution = () => {
-    const correctOrder = puzzleLevels[level].map(f => f.id);
+    const correctOrder = puzzleLevels[level].fragments.map(f => f.id);
     const currentOrder = fragments.map(f => f.id);
     const success = JSON.stringify(correctOrder) === JSON.stringify(currentOrder);
     

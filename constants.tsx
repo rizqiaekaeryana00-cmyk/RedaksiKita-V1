@@ -1,5 +1,5 @@
 
-import { Question, NewsFragment, InvestigationData, Lesson } from './types';
+import { Question, NewsFragment, InvestigationData, Lesson, PuzzleLevel } from './types';
 
 export const INVESTIGATION_FILES: InvestigationData[] = [
   { 
@@ -78,18 +78,24 @@ export const LESSONS: Lesson[] = [
   }
 ];
 
-export const PUZZLE_LEVELS: NewsFragment[][] = [
-  [
-    { id: '1-1', text: "Siswa SMPN 3 Bonang Ciptakan Robot Penyiram Tanaman Otomatis", type: 'TITLE' },
-    { id: '1-2', text: "BONANG - Inovasi membanggakan datang dari siswa kelas VII SMPN 3 Bonang yang berhasil membuat alat penyiram tanaman pintar.", type: 'LEAD' },
-    { id: '1-3', text: "Alat ini menggunakan sensor kelembapan tanah untuk mendeteksi kapan tanaman membutuhkan air secara otomatis.", type: 'BODY' }
-  ],
-  [
-    { id: '2-1', text: "Lomba Kebersihan Kelas: VII-A Raih Juara Umum", type: 'TITLE' },
-    { id: '2-2', text: "DEMAK - Setelah penilaian ketat selama satu bulan, kelas VII-A akhirnya dinobatkan sebagai kelas terbersih tahun ini.", type: 'LEAD' },
-    { id: '2-3', text: "Kriteria penilaian meliputi kerapian meja, ketersediaan alat kebersihan, dan dekorasi pojok baca yang kreatif.", type: 'BODY' },
-    { id: '2-4', text: "Hadiah diserahkan langsung oleh Pembina OSIS pada upacara bendera Senin pagi tadi.", type: 'TAIL' }
-  ]
+export const PUZZLE_LEVELS: PuzzleLevel[] = [
+  {
+    id: 'level-1',
+    fragments: [
+      { id: '1-1', text: "Siswa SMPN 3 Bonang Ciptakan Robot Penyiram Tanaman Otomatis", type: 'TITLE' },
+      { id: '1-2', text: "BONANG - Inovasi membanggakan datang dari siswa kelas VII SMPN 3 Bonang yang berhasil membuat alat penyiram tanaman pintar.", type: 'LEAD' },
+      { id: '1-3', text: "Alat ini menggunakan sensor kelembapan tanah untuk mendeteksi kapan tanaman membutuhkan air secara otomatis.", type: 'BODY' }
+    ]
+  },
+  {
+    id: 'level-2',
+    fragments: [
+      { id: '2-1', text: "Lomba Kebersihan Kelas: VII-A Raih Juara Umum", type: 'TITLE' },
+      { id: '2-2', text: "DEMAK - Setelah penilaian ketat selama satu bulan, kelas VII-A akhirnya dinobatkan sebagai kelas terbersih tahun ini.", type: 'LEAD' },
+      { id: '2-3', text: "Kriteria penilaian meliputi kerapian meja, ketersediaan alat kebersihan, dan dekorasi pojok baca yang kreatif.", type: 'BODY' },
+      { id: '2-4', text: "Hadiah diserahkan langsung oleh Pembina OSIS pada upacara bendera Senin pagi tadi.", type: 'TAIL' }
+    ]
+  }
 ];
 
 export const WRITING_EVENTS = [

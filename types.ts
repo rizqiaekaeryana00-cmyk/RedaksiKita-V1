@@ -13,6 +13,11 @@ export interface NewsFragment {
   type: 'TITLE' | 'LEAD' | 'BODY' | 'TAIL';
 }
 
+export interface PuzzleLevel {
+  id: string;
+  fragments: NewsFragment[];
+}
+
 export interface Question {
   id: number;
   question: string;
