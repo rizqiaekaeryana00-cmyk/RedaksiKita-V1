@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Home, Save, Plus, Trash2, BookOpen, ClipboardCheck, Gamepad2, Search, Video, Youtube, List, X } from 'lucide-react';
+import { Home, Save, Plus, Trash2, BookOpen, ClipboardCheck, Gamepad2, Search, Video, Youtube, List, X, Link as LinkIcon } from 'lucide-react';
 import { Lesson, Question, NewsFragment, InvestigationData, VideoItem } from '../types';
 import { sounds } from '../services/audio';
 
@@ -69,63 +69,108 @@ const AdminSettings: React.FC<AdminSettingsProps> = (props) => {
       <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
         {activeTab === 'LESSONS' && (
           <div className="space-y-6">
-            <div className="bg-purple-100 p-4 rounded-xl border-2 border-purple-600 border-dashed">
-              <p className="text-[10px] font-black text-purple-700 uppercase leading-none mb-1">Info Database</p>
-              <p className="text-xs font-bold text-purple-900">Perubahan pada materi akan otomatis tersimpan di Firebase. Gunakan URL YouTube (v=xxx atau youtu.be) untuk playlist.</p>
+            <div className="bg-purple-100 p-4 rounded-2xl border-2 border-purple-600 border-dashed flex items-start space-x-3">
+              <Youtube className="w-6 h-6 text-red-600 shrink-0 mt-1" />
+              <div>
+                <p className="text-[10px] font-black text-purple-700 uppercase leading-none mb-1">Panduan Video</p>
+                <p className="text-xs font-bold text-purple-900 leading-tight">Masukkan link YouTube yang valid. Sistem akan otomatis memutar video tersebut di halaman materi siswa.</p>
+              </div>
             </div>
             
-            <div className="grid grid-cols-1 gap-6">
+            <div className="grid grid-cols-1 gap-8">
               {props.lessons.map(lesson => (
-                <div key={lesson.id} className="bg-white p-6 rounded-[2rem] border-4 border-black flex flex-col space-y-4 shadow-md relative group">
-                  <div className="flex justify-between items-start">
+                <div key={lesson.id} className="bg-white p-6 md:p-8 rounded-[2.5rem] border-4 border-black flex flex-col space-y-6 shadow-[8px_8px_0px_#000] relative group">
+                  <div className="flex justify-between items-start border-b-2 border-slate-100 pb-4">
                     <div className="flex-1">
-                      <h4 className="font-black uppercase text-lg italic text-black leading-none mb-2">{lesson.title}</h4>
+                      <h4 className="font-black uppercase text-xl italic text-black leading-none mb-2">{lesson.title}</h4>
                       <p className="text-[11px] font-bold text-slate-500 line-clamp-2 italic">"{lesson.content}"</p>
                     </div>
-                    <button onClick={() => deleteItem('LESSONS', lesson.id)} className="p-3 bg-red-50 text-red-600 border-2 border-black rounded-xl hover:bg-red-500 hover:text-white transition-colors"><Trash2 className="w-5 h-5" /></button>
+                    <button 
+                      onClick={() => deleteItem('LESSONS', lesson.id)} 
+                      className="p-3 bg-red-50 text-red-600 border-2 border-black rounded-xl hover:bg-red-500 hover:text-white transition-colors"
+                      title="Hapus Materi"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
                   </div>
                   
-                  {/* Playlist Manager */}
-                  <div className="bg-slate-50 p-4 rounded-2xl border-2 border-black border-dashed space-y-3">
-                    <h5 className="text-[10px] font-black uppercase text-slate-400 flex items-center">
-                      <Youtube className="w-3 h-3 mr-1 text-red-500" /> Playlist Video YouTube
-                    </h5>
-                    <div className="space-y-2">
+                  {/* Playlist Manager - Enhanced UI */}
+                  <div className="bg-slate-50 p-6 rounded-3xl border-2 border-black border-dashed space-y-4">
+                    <div className="flex justify-between items-center">
+                      <h5 className="text-xs font-black uppercase text-slate-500 flex items-center italic">
+                        <Youtube className="w-4 h-4 mr-2 text-red-600" /> Pengaturan Playlist Video
+                      </h5>
+                      <span className="text-[10px] font-black text-slate-400 bg-white px-2 py-1 rounded-lg border border-black/10">
+                        {lesson.videos.length} VIDEO AKTIF
+                      </span>
+                    </div>
+
+                    <div className="space-y-4">
                       {lesson.videos.map((vid, vIdx) => (
-                        <div key={vid.id} className="flex items-center space-x-2 bg-white p-2 rounded-xl border border-black/10">
-                          <span className="text-[10px] font-black text-slate-300 w-4">{vIdx + 1}</span>
-                          <input 
-                            className="flex-1 text-[10px] font-bold outline-none border-r border-black/5 pr-2" 
-                            value={vid.title} 
-                            placeholder="Judul Video"
-                            onChange={(e) => {
-                              const newVids = [...lesson.videos];
-                              newVids[vIdx].title = e.target.value;
-                              updateLessonVideos(lesson.id, newVids);
-                            }}
-                          />
-                          <input 
-                            className="flex-1 text-[10px] font-mono outline-none text-blue-600" 
-                            value={vid.url} 
-                            placeholder="Link YouTube"
-                            onChange={(e) => {
-                              const newVids = [...lesson.videos];
-                              newVids[vIdx].url = e.target.value;
-                              updateLessonVideos(lesson.id, newVids);
-                            }}
-                          />
-                          <button onClick={() => {
-                            updateLessonVideos(lesson.id, lesson.videos.filter((_, idx) => idx !== vIdx));
-                          }} className="text-red-400 hover:text-red-600 p-1"><X className="w-4 h-4" /></button>
+                        <div key={vid.id} className="bg-white p-5 rounded-2xl border-2 border-black shadow-[4px_4px_0px_#000] relative group/video">
+                          {/* Number Badge */}
+                          <div className="absolute -top-3 -left-3 w-8 h-8 bg-black text-white rounded-full flex items-center justify-center font-black text-xs border-2 border-white shadow-md z-10">
+                            {vIdx + 1}
+                          </div>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                              <label className="text-[9px] font-black uppercase text-slate-400 ml-1 tracking-widest flex items-center">
+                                <Video className="w-3 h-3 mr-1" /> Judul Tampilan
+                              </label>
+                              <input 
+                                className="w-full p-3 rounded-xl border-2 border-slate-100 bg-slate-50 font-bold text-xs outline-none focus:border-red-500 focus:bg-white transition-all placeholder:text-slate-300" 
+                                value={vid.title} 
+                                placeholder="Contoh: Langkah-langkah Wawancara"
+                                onChange={(e) => {
+                                  const newVids = [...lesson.videos];
+                                  newVids[vIdx].title = e.target.value;
+                                  updateLessonVideos(lesson.id, newVids);
+                                }}
+                              />
+                            </div>
+                            <div className="space-y-1.5">
+                              <label className="text-[9px] font-black uppercase text-slate-400 ml-1 tracking-widest flex items-center">
+                                <LinkIcon className="w-3 h-3 mr-1" /> Link URL YouTube
+                              </label>
+                              <div className="relative">
+                                <input 
+                                  className="w-full p-3 rounded-xl border-2 border-slate-100 bg-slate-50 font-mono text-[10px] text-blue-600 outline-none focus:border-red-500 focus:bg-white transition-all pr-10 placeholder:text-slate-300" 
+                                  value={vid.url} 
+                                  placeholder="https://www.youtube.com/watch?v=..."
+                                  onChange={(e) => {
+                                    const newVids = [...lesson.videos];
+                                    newVids[vIdx].url = e.target.value;
+                                    updateLessonVideos(lesson.id, newVids);
+                                  }}
+                                />
+                                <Youtube className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-red-500 opacity-20" />
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Delete Video Button */}
+                          <button 
+                            onClick={() => {
+                              sounds.wrong();
+                              updateLessonVideos(lesson.id, lesson.videos.filter((_, idx) => idx !== vIdx));
+                            }} 
+                            className="absolute -top-2 -right-2 p-2 bg-red-50 text-red-600 rounded-xl border border-black hover:bg-red-600 hover:text-white transition-all shadow-sm opacity-0 group-hover/video:opacity-100"
+                            title="Hapus Video"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
                         </div>
                       ))}
+
                       <button 
                         onClick={() => {
-                          updateLessonVideos(lesson.id, [...lesson.videos, { id: Date.now().toString(), title: "Video Baru", url: "" }]);
+                          sounds.click();
+                          updateLessonVideos(lesson.id, [...lesson.videos, { id: Date.now().toString(), title: "", url: "" }]);
                         }}
-                        className="w-full py-2 bg-white border-2 border-black border-dotted rounded-xl text-[10px] font-black uppercase flex items-center justify-center hover:bg-slate-100"
+                        className="w-full py-5 bg-white border-4 border-black border-dashed rounded-[1.5rem] text-[10px] font-black uppercase flex items-center justify-center hover:bg-red-50 hover:text-red-600 hover:border-red-600 transition-all group/add"
                       >
-                        <Plus className="w-3 h-3 mr-1" /> Tambah Video ke Playlist
+                        <Plus className="w-5 h-5 mr-2 group-hover/add:scale-125 transition-transform" /> Tambah Video Ke Playlist
                       </button>
                     </div>
                   </div>
@@ -136,7 +181,6 @@ const AdminSettings: React.FC<AdminSettingsProps> = (props) => {
           </div>
         )}
 
-        {/* Tab lain tetap sama tapi dengan styling yang konsisten */}
         {activeTab === 'QUIZ' && (
           <div className="space-y-4">
             <h3 className="font-black uppercase text-black italic">Daftar Soal Kuis</h3>
@@ -151,7 +195,6 @@ const AdminSettings: React.FC<AdminSettingsProps> = (props) => {
                 </div>
               ))}
             </div>
-            <p className="text-center text-[10px] font-black text-slate-400 border-2 border-black border-dotted p-6 rounded-2xl">Fitur tambah kuis via dashboard akan segera hadir.</p>
           </div>
         )}
 
