@@ -213,7 +213,7 @@ const AdminSettings: React.FC<AdminSettingsProps> = (props) => {
               />
             ))}
             <AddButton label="Tambah Item Hoax Shot" onClick={() => {
-              const newItem: HoaxPoolItem = { id: Date.now().toString(), text: "Kalimat berita baru...", isHoax: true };
+              const newItem: HoaxPoolItem = { id: Date.now().toString(), text: "[Tulis Kalimat Berita Di Sini]", isHoax: true };
               props.setHoaxPool([...props.hoaxPool, newItem]);
             }} />
           </div>
@@ -240,7 +240,7 @@ const LessonEditor: React.FC<{ lesson: Lesson, onUpdate: (l: Lesson) => void, on
     <div className="bg-white p-6 rounded-[2.5rem] border-4 border-black shadow-[8px_8px_0px_#000] space-y-4">
       <div className="flex justify-between items-center border-b-2 border-slate-100 pb-3">
         <div className="flex items-center space-x-3">
-          <BookOpen className="text-purple-600 w-5 h-5" />
+          < BookOpen className="text-purple-600 w-5 h-5" />
           <h4 className="font-black uppercase text-sm italic">{draft.title}</h4>
         </div>
         <div className="flex space-x-2">
