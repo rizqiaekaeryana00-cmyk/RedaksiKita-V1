@@ -1,5 +1,5 @@
 
-import { Question, NewsFragment, InvestigationData } from './types';
+import { Question, NewsFragment, InvestigationData, Lesson } from './types';
 
 export const INVESTIGATION_FILES: InvestigationData[] = [
   { 
@@ -31,42 +31,49 @@ export const WRITING_CLUES = {
   angle: "Coba tulis dari sudut pandang siswa yang merasakan langsung, bukan cuma penonton."
 };
 
-export const LESSONS = [
+export const LESSONS: Lesson[] = [
   {
     id: 'video-materi',
     title: 'Video: Menjadi Jurnalis Cilik',
     content: 'Selamat datang di dunia jurnalistik! Sebelum kita mulai menulis, mari saksikan video singkat tentang bagaimana seorang jurnalis bekerja di lapangan. Perhatikan bagaimana mereka mencari narasumber, mencatat fakta penting, dan mengolahnya menjadi laporan yang bermanfaat bagi orang banyak.',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', 
+    videos: [
+      { id: 'v1', title: 'Langkah Wartawan Wawancara', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' }
+    ],
     meta: 'Simak baik-baik langkah wartawan saat melakukan wawancara!'
   },
   {
     id: 'hakikat',
     title: 'Hakikat: Apa Itu Berita?',
     content: 'Berita bukan sekadar cerita fiksi. Hakikat berita adalah laporan mengenai suatu peristiwa yang baru terjadi (aktual), benar-benar terjadi (faktual), dan memiliki dampak atau daya tarik bagi masyarakat. \n\nBerita bertujuan untuk menginformasikan, mendidik, dan memberikan pengetahuan baru. Sebuah berita yang baik harus bisa menjawab rasa ingin tahu pembaca secara objektif dan jujur.',
+    videos: [],
     meta: 'Inti: Fakta yang baru, nyata, dan penting bagi orang banyak.'
   },
   {
     id: 'ciri-ciri',
     title: 'Ciri-Ciri Teks Berita',
     content: 'Untuk membedakan berita dengan teks lain, perhatikan 5 ciri utama ini:\n\n1. Faktual: Harus berdasarkan kenyataan, bukan gosip atau karangan.\n2. Aktual: Peristiwa yang dilaporkan masih baru atau sedang hangat diperbincangkan.\n3. Objektif: Penulis tidak boleh memasukkan opini pribadi. Sampaikan apa adanya sesuai fakta lapangan.\n4. Seimbang: Tidak memihak satu pihak saja (cover both sides).\n5. Bahasa Komunikatif: Menggunakan Bahasa Indonesia yang baku namun mudah dipahami oleh semua orang.',
+    videos: [],
     meta: 'Ingat! Tanpa fakta yang kuat, tulisanmu hanyalah sebuah cerita, bukan berita.'
   },
   {
     id: 'struktur',
     title: 'Struktur: Piramida Terbalik',
     content: 'Berita disusun dengan pola Piramida Terbalik, artinya informasi paling penting diletakkan di bagian atas:\n\n1. Kepala (Judul): Mewakili seluruh isi berita dalam kalimat singkat.\n2. Teras (Lead): Bagian paling vital. Berisi ringkasan 5W+1H agar pembaca langsung tahu inti kejadian.\n3. Tubuh (Body): Penjelasan detail kronologi, kutipan wawancara, dan data pendukung.\n4. Ekor (Tail): Informasi tambahan yang melengkapi berita namun tidak bersifat wajib.',
+    videos: [],
     meta: 'Tips: Fokuskan tenagamu pada Teras Berita agar pembaca langsung tertarik!'
   },
   {
     id: 'contoh',
     title: 'Bedah Contoh Berita Nyata',
     content: 'Mari bedah berita berikut:\n\n"Siswa SMPN 3 Bonang Panen Sayur Hidroponik"\n\n(Teras): Sebanyak 50 siswa kelas VII SMPN 3 Bonang sukses memanen sawi hidroponik di kebun sekolah pada Senin (10/3) pagi. \n\n(Tubuh): Kegiatan ini merupakan bagian dari proyek P5 lingkungan. Kepala Sekolah, Ibu Siti, menyatakan panen ini akan dijual di kantin sekolah. Siswa mengaku senang karena bisa belajar bercocok tanam secara modern tanpa tanah.',
+    videos: [],
     meta: 'Analisis: Judul menarik, Teras jelas (Who, What, Where, When), Tubuh detail (Why, How).'
   },
   {
     id: 'langkah',
     title: 'Langkah Menulis Teks Berita',
     content: 'Ikuti 5 langkah jitu untuk menghasilkan berita yang berkualitas:\n\n1. Penemuan Peristiwa: Cari kejadian yang unik atau penting di sekitarmu.\n2. Pengumpulan Informasi: Lakukan observasi langsung dan wawancarai orang yang terlibat.\n3. Mencatat 5W+1H: Pastikan kamu punya data: Apa, Siapa, Di mana, Kapan, Mengapa, dan Bagaimana.\n4. Menyusun Kerangka: Gunakan struktur piramida terbalik agar alur tulisan logis.\n5. Menulis & Menyunting: Tulis draft pertamamu, lalu periksa ejaan dan tanda baca sesuai PUEBI.',
+    videos: [],
     meta: 'Action: Jangan takut salah, editor hebat selalu bermula dari penulis yang berani mencoba!'
   }
 ];

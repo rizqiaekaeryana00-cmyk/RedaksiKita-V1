@@ -2,15 +2,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion, Reorder } from 'framer-motion';
 import { Home, Gamepad2, RotateCcw, AlertCircle, CheckCircle2, Info, ArrowRight } from 'lucide-react';
-import { PUZZLE_LEVELS } from '../constants';
 import { NewsFragment } from '../types';
 import { sounds } from '../services/audio';
 
 interface NewsArenaProps {
   onBack: () => void;
+  puzzleLevels: NewsFragment[][];
 }
 
-const NewsArena: React.FC<NewsArenaProps> = ({ onBack }) => {
+const NewsArena: React.FC<NewsArenaProps> = ({ onBack, puzzleLevels }) => {
   const [level, setLevel] = useState(0);
   const [fragments, setFragments] = useState<NewsFragment[]>([]);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -18,13 +18,15 @@ const NewsArena: React.FC<NewsArenaProps> = ({ onBack }) => {
   const [showInstructions, setShowInstructions] = useState(true);
 
   useEffect(() => {
-    const shuffled = [...PUZZLE_LEVELS[level]].sort(() => Math.random() - 0.5);
-    setFragments(shuffled);
-    setIsCorrect(null);
-  }, [level]);
+    if (puzzleLevels[level]) {
+      const shuffled = [...puzzleLevels[level]].sort(() => Math.random() - 0.5);
+      setFragments(shuffled);
+      setIsCorrect(null);
+    }
+  }, [level, puzzleLevels]);
 
   const checkSolution = () => {
-    const correctOrder = PUZZLE_LEVELS[level].map(f => f.id);
+    const correctOrder = puzzleLevels[level].map(f => f.id);
     const currentOrder = fragments.map(f => f.id);
     const success = JSON.stringify(correctOrder) === JSON.stringify(currentOrder);
     
@@ -40,17 +42,19 @@ const NewsArena: React.FC<NewsArenaProps> = ({ onBack }) => {
 
   const nextLevel = () => {
     sounds.click();
-    if (level < PUZZLE_LEVELS.length - 1) {
+    if (level < puzzleLevels.length - 1) {
       setLevel(level + 1);
     } else {
       onBack();
     }
   };
 
+  if (!puzzleLevels[level]) return <div className="p-20 text-center font-black">BELUM ADA LEVEL PUZZLE.</div>;
+
   return (
     <div className="h-[calc(100vh-80px)] bg-[#F8FAFC] p-4 flex flex-col items-center overflow-hidden">
       {showInstructions && (
-        <motion.div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 p-4">
+        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 p-4">
           <div className="glass-card max-w-sm p-6 text-center bg-white rounded-3xl">
             <Gamepad2 className="w-12 h-12 mx-auto text-red-500 mb-3" />
             <h2 className="text-xl font-black uppercase mb-2">Cara Bermain</h2>
@@ -78,12 +82,8 @@ const NewsArena: React.FC<NewsArenaProps> = ({ onBack }) => {
             {fragments.map((frag) => (
               <Reorder.Item key={frag.id} value={frag} className="cursor-grab active:cursor-grabbing">
                 <motion.div className="bg-slate-50 p-4 rounded-xl border-2 border-black hover:bg-slate-100 transition-colors shadow-sm">
-                  <div className={`text-[9px] font-black px-2 py-0.5 rounded-full inline-block mb-1.5 uppercase border border-black ${
-                    frag.type === 'TITLE' ? 'bg-red-400' : 'bg-blue-400 text-white'
-                  }`}>
-                    {frag.type}
-                  </div>
-                  <p className="text-sm font-bold text-black leading-tight">{frag.text}</p>
+                  <div className={`text-[9px] font-black px-2 py-0.5 rounded-full inline-block mb-1.5 uppercase border border-black ${frag.type === 'TITLE' ? 'bg-red-400' : 'bg-blue-400 text-white'}`}>{frag.type}</div>
+                  <p className="text-sm font-bold text-black">{frag.text}</p>
                 </motion.div>
               </Reorder.Item>
             ))}
@@ -92,21 +92,16 @@ const NewsArena: React.FC<NewsArenaProps> = ({ onBack }) => {
 
         <div className="shrink-0 flex flex-col items-center pb-2">
           {isCorrect === null ? (
-            <button onClick={checkSolution} className="btn-primary w-full max-w-sm py-4 text-white font-black uppercase text-lg shadow-[6px_6px_0px_#000] active:translate-y-1 active:shadow-none">
-              Terbitkan Berita!
-            </button>
+            <button onClick={checkSolution} className="btn-primary w-full max-w-sm py-4 text-white font-black uppercase text-lg">Terbitkan Berita!</button>
           ) : (
             <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} className={`w-full max-w-2xl p-4 rounded-xl border-4 border-black flex items-center justify-between bg-white shadow-[6px_6px_0px_#000]`}>
               <div className="flex items-center space-x-3">
                 {isCorrect ? <CheckCircle2 className="w-8 h-8 text-green-500" /> : <AlertCircle className="w-8 h-8 text-red-500" />}
                 <div className="text-black">
                   <h4 className="font-black text-base uppercase leading-none">{isCorrect ? 'Sempurna!' : 'Coba Lagi!'}</h4>
-                  <p className="text-xs font-bold text-slate-500">{isCorrect ? 'Urutan berita logis.' : 'Masih ada yang tertukar.'}</p>
                 </div>
               </div>
-              <button onClick={isCorrect ? nextLevel : () => setIsCorrect(null)} className="btn-primary px-5 py-2 text-white font-black uppercase text-xs rounded-lg">
-                {isCorrect ? 'Level Berikutnya' : 'Ulangi'}
-              </button>
+              <button onClick={isCorrect ? nextLevel : () => setIsCorrect(null)} className="btn-primary px-5 py-2 text-white font-black uppercase text-xs rounded-lg">{isCorrect ? 'Level Berikutnya' : 'Ulangi'}</button>
             </motion.div>
           )}
         </div>

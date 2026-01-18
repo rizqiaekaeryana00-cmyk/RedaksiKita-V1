@@ -1,5 +1,5 @@
 
-export type AppView = 'LOGIN' | 'LOBBY' | 'BRIEFING' | 'ARENA' | 'EVALUATION' | 'INVESTIGATION' | 'WRITING_DESK' | 'HOAX_SHOOTER' | 'INFO';
+export type AppView = 'LOGIN' | 'LOBBY' | 'BRIEFING' | 'ARENA' | 'EVALUATION' | 'INVESTIGATION' | 'WRITING_DESK' | 'HOAX_SHOOTER' | 'INFO' | 'ADMIN_SETTINGS';
 
 export interface Student {
   name: string;
@@ -27,4 +27,18 @@ export interface InvestigationData {
   content: string;
   title: string;
   isFact: boolean;
+}
+
+export interface VideoItem {
+  id: string;
+  title: string;
+  url: string;
+}
+
+export interface Lesson {
+  id: string;
+  title: string;
+  content: string;
+  videos: VideoItem[];
+  meta: string;
 }

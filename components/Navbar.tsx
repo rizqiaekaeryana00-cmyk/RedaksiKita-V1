@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LogOut, Newspaper, User, Check, X } from 'lucide-react';
+import { LogOut, Newspaper, User, Check, X, Settings } from 'lucide-react';
 import { Student, AppView } from '../types';
 import { sounds } from '../services/audio';
 
@@ -54,12 +54,24 @@ const Navbar: React.FC<NavbarProps> = ({ student, currentView, onLogout, onNavig
 
         {/* User & Actions Section */}
         <div className="flex items-center space-x-3">
+          {student.role === 'ADMIN' && (
+            <button 
+              onClick={() => { sounds.click(); onNavigate('ADMIN_SETTINGS'); }}
+              className="p-2 bg-purple-100 text-purple-600 rounded-xl border-2 border-black hover:bg-purple-200 transition-colors"
+              title="Pengaturan Admin"
+            >
+              <Settings className="w-5 h-5" />
+            </button>
+          )}
+
           <div className="hidden sm:flex items-center space-x-2 bg-[#FFD600] px-3 py-1.5 rounded-xl border-2 border-black shadow-[2px_2px_0px_#000]">
             <div className="bg-white p-1 rounded-full border border-black">
               <User className="w-3 h-3 text-black" />
             </div>
             <div className="flex flex-col">
-              <span className="text-[8px] font-black uppercase text-black/60 leading-none">Jurnalis Aktif</span>
+              <span className="text-[8px] font-black uppercase text-black/60 leading-none">
+                {student.role === 'ADMIN' ? 'EDITOR UTAMA' : 'Jurnalis Aktif'}
+              </span>
               <span className="text-[10px] font-black text-black leading-tight truncate max-w-[100px]">
                 {student.name.toUpperCase()}
               </span>

@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { User, School, ArrowRight, ShieldCheck } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { User, School, ArrowRight, ShieldCheck, Lock } from 'lucide-react';
 import { Student } from '../types';
 import { sounds } from '../services/audio';
 
@@ -13,18 +13,31 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [name, setName] = useState('');
   const [school, setSchool] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (name && school) {
-      sounds.success();
-      onLogin({ name, school, role: isAdmin ? 'ADMIN' : 'STUDENT' });
+    setError('');
+
+    if (isAdmin) {
+      if (name.toLowerCase() === 'admin' && password === '418728') {
+        sounds.success();
+        onLogin({ name, school, role: 'ADMIN' });
+      } else {
+        setError('Username atau Password Admin salah!');
+        sounds.wrong();
+      }
+    } else {
+      if (name && school) {
+        sounds.success();
+        onLogin({ name, school, role: 'STUDENT' });
+      }
     }
   };
 
   return (
     <div className="h-screen bg-[#FFD600] flex items-center justify-center p-4 md:p-6 relative overflow-hidden">
-      {/* Decorative Circles - Adjusted for screen size */}
       <div className="absolute -top-20 -left-20 w-48 h-48 md:w-64 md:h-64 bg-[#FF3D00] rounded-full opacity-20"></div>
       <div className="absolute -bottom-20 -right-20 w-64 h-64 md:w-80 md:h-80 bg-[#00E5FF] rounded-full opacity-20"></div>
 
@@ -49,7 +62,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
               <input 
                 required
                 type="text"
-                placeholder="Tulis namamu..."
+                placeholder={isAdmin ? "Username Admin..." : "Tulis namamu..."}
                 className="w-full pl-11 pr-4 py-3 md:py-3.5 rounded-xl border-4 border-black focus:ring-4 focus:ring-[#00E5FF]/30 outline-none font-bold text-sm md:text-base text-black bg-white placeholder:text-slate-300"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -57,24 +70,47 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             </div>
           </div>
 
-          <div>
-            <label className="block text-black font-black text-[10px] md:text-xs uppercase mb-1.5 ml-1 tracking-wider">Asal Sekolah</label>
-            <div className="relative">
-              <School className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 z-10" />
-              <input 
-                required
-                type="text"
-                placeholder="Tulis sekolahmu..."
-                className="w-full pl-11 pr-4 py-3 md:py-3.5 rounded-xl border-4 border-black focus:ring-4 focus:ring-[#00E5FF]/30 outline-none font-bold text-sm md:text-base text-black bg-white placeholder:text-slate-300"
-                value={school}
-                onChange={(e) => setSchool(e.target.value)}
-              />
-            </div>
-          </div>
+          {!isAdmin && (
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
+              <label className="block text-black font-black text-[10px] md:text-xs uppercase mb-1.5 ml-1 tracking-wider">Asal Sekolah</label>
+              <div className="relative">
+                <School className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 z-10" />
+                <input 
+                  required={!isAdmin}
+                  type="text"
+                  placeholder="Tulis sekolahmu..."
+                  className="w-full pl-11 pr-4 py-3 md:py-3.5 rounded-xl border-4 border-black focus:ring-4 focus:ring-[#00E5FF]/30 outline-none font-bold text-sm md:text-base text-black bg-white placeholder:text-slate-300"
+                  value={school}
+                  onChange={(e) => setSchool(e.target.value)}
+                />
+              </div>
+            </motion.div>
+          )}
+
+          <AnimatePresence>
+            {isAdmin && (
+              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
+                <label className="block text-black font-black text-[10px] md:text-xs uppercase mb-1.5 ml-1 tracking-wider">Password Admin</label>
+                <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 z-10" />
+                  <input 
+                    required
+                    type="password"
+                    placeholder="Masukkan password..."
+                    className="w-full pl-11 pr-4 py-3 md:py-3.5 rounded-xl border-4 border-black focus:ring-4 focus:ring-[#00E5FF]/30 outline-none font-bold text-sm md:text-base text-black bg-white placeholder:text-slate-300"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {error && <p className="text-red-600 text-[10px] font-black uppercase text-center">{error}</p>}
 
           <div 
             className="flex items-center space-x-3 p-2.5 bg-slate-50 rounded-xl cursor-pointer border-2 border-transparent hover:border-black transition-all group" 
-            onClick={() => { sounds.click(); setIsAdmin(!isAdmin); }}
+            onClick={() => { sounds.click(); setIsAdmin(!isAdmin); setPassword(''); setError(''); setName(''); }}
           >
             <div className={`w-5 h-5 border-2 border-black rounded flex items-center justify-center transition-colors ${isAdmin ? 'bg-[#FF3D00]' : 'bg-white'}`}>
               {isAdmin && <ShieldCheck className="w-3.5 h-3.5 text-white" />}
@@ -87,13 +123,12 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             onMouseEnter={sounds.hover}
             className="w-full bg-[#FF3D00] py-3.5 md:py-4 text-white font-black uppercase tracking-widest text-sm md:text-base border-4 border-black rounded-xl shadow-[4px_4px_0px_#000] flex items-center justify-center space-x-3 hover:scale-[1.02] active:translate-y-0.5 active:shadow-none transition-all"
           >
-            <span>Mulai Petualangan</span>
+            <span>{isAdmin ? 'Verifikasi Admin' : 'Mulai Petualangan'}</span>
             <ArrowRight className="w-5 h-5 md:w-6 md:h-6" />
           </button>
         </form>
       </motion.div>
       
-      {/* Footer text for Login page only */}
       <div className="absolute bottom-4 text-[10px] font-black text-black/40 uppercase tracking-widest text-center w-full">
         REDaksi KITA - Petualangan Jurnalis Muda
       </div>
