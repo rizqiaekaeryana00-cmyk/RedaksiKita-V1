@@ -20,13 +20,11 @@ const App: React.FC = () => {
   const [student, setStudent] = useState<Student | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // State Konten
   const [lessons, setLessons] = useState<Lesson[]>(LESSONS);
   const [quizzes, setQuizzes] = useState<Question[]>(QUIZ_QUESTIONS);
   const [puzzles, setPuzzles] = useState<PuzzleLevel[]>(PUZZLE_LEVELS);
   const [investigations, setInvestigations] = useState<InvestigationData[]>(INVESTIGATION_FILES);
 
-  // Load data dari Firebase saat startup
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -46,9 +44,7 @@ const App: React.FC = () => {
     fetchData();
   }, []);
 
-  // Fungsi Helper untuk Update dan Sync
   const updateContent = async (type: string, newData: any) => {
-    // 1. Update State Lokal dulu agar UI responsif
     let updatedLessons = lessons;
     let updatedQuizzes = quizzes;
     let updatedPuzzles = puzzles;
@@ -59,7 +55,6 @@ const App: React.FC = () => {
     if (type === 'PUZZLE') { updatedPuzzles = newData; setPuzzles(newData); }
     if (type === 'INVESTIGATION') { updatedInvestigations = newData; setInvestigations(newData); }
 
-    // 2. Kirim ke Firebase Cloud
     await saveAppData({
       lessons: updatedLessons,
       quizzes: updatedQuizzes,
@@ -80,9 +75,9 @@ const App: React.FC = () => {
 
   const renderView = () => {
     if (!isLoaded) return (
-      <div className="h-screen flex flex-col items-center justify-center bg-[#FFD600] space-y-4">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#FFD600] space-y-4 p-6">
         <div className="w-16 h-16 border-8 border-black border-t-[#FF3D00] rounded-full animate-spin"></div>
-        <p className="font-black uppercase italic tracking-tighter">Sinkronisasi Cloud...</p>
+        <p className="font-black uppercase italic tracking-tighter text-center">Menyiapkan Ruang Redaksi...</p>
       </div>
     );
 
@@ -109,16 +104,16 @@ const App: React.FC = () => {
         );
       case 'INFO':
         return (
-          <div className="h-full bg-slate-100 flex items-center justify-center p-6 overflow-hidden">
-            <div className="glass-card max-w-2xl p-8 md:p-12 text-center bg-white border-4 border-black shadow-[12px_12px_0px_#000] rounded-[2.5rem]">
-              <h2 className="text-3xl font-black uppercase mb-6 text-black italic tracking-tighter">Informasi Media</h2>
-              <div className="space-y-3 text-left font-bold mb-10 text-black leading-tight">
+          <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4 md:p-6">
+            <div className="glass-card max-w-2xl w-full p-8 md:p-12 text-center bg-white border-4 border-black shadow-[12px_12px_0px_#000] rounded-[2.5rem]">
+              <h2 className="text-2xl md:text-3xl font-black uppercase mb-6 text-black italic tracking-tighter">Informasi Media</h2>
+              <div className="space-y-4 text-left font-bold mb-10 text-black leading-tight text-sm md:text-base">
                 <p>📍 <span className="text-[#FF3D00]">Tujuan:</span> Melatih siswa SMP Kelas VII menulis teks berita sesuai struktur 5W+1H.</p>
                 <p>👩‍🏫 <span className="text-[#FF3D00]">Pembuat:</span> Rizqia Eka Eryana</p>
                 <p>🏫 <span className="text-[#FF3D00]">Institusi:</span> SMP Negeri 3 Bonang, Kabupaten Demak</p>
-                <p>🎓 <span className="text-[#FF3D00]">Pendidikan:</span> Mahasiswa S2 Pendidikan Bahasa Indonesia UNNES</p>
+                <p>🎓 <span className="text-[#FF3D00]">Pendidikan:</span> S2 Pendidikan Bahasa Indonesia UNNES</p>
               </div>
-              <button onClick={() => setCurrentView('LOBBY')} className="btn-primary px-12 py-4 text-white font-black uppercase rounded-2xl border-2 border-black hover:scale-105 transition-transform">Tutup Info</button>
+              <button onClick={() => setCurrentView('LOBBY')} className="w-full md:w-auto bg-[#FF3D00] px-12 py-4 text-white font-black uppercase rounded-2xl border-4 border-black hover:scale-105 transition-transform shadow-[4px_4px_0px_#000]">Tutup Info</button>
             </div>
           </div>
         );
@@ -127,13 +122,19 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="font-playful selection:bg-[#FF3D00] selection:text-white h-screen flex flex-col overflow-hidden bg-[#F8FAFC]">
+    <div className="font-playful selection:bg-[#FF3D00] selection:text-white min-h-screen flex flex-col bg-[#F8FAFC]">
       {currentView !== 'LOGIN' && student && (
         <Navbar student={student} currentView={currentView} onLogout={handleLogout} onNavigate={setCurrentView} />
       )}
-      <main className="flex-1 overflow-hidden">
+      <main className="flex-1 flex flex-col">
         <AnimatePresence mode="wait">
-          <motion.div key={currentView} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
+          <motion.div 
+            key={currentView} 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }}
+            className="flex-1 flex flex-col"
+          >
             {renderView()}
           </motion.div>
         </AnimatePresence>
