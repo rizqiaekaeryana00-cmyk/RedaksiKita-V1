@@ -12,7 +12,7 @@ import InvestigationRoom from './components/InvestigationRoom';
 import HoaxShooter from './components/HoaxShooter';
 import Navbar from './components/Navbar';
 import AdminSettings from './components/AdminSettings';
-import { LESSONS, QUIZ_QUESTIONS, PUZZLE_LEVELS, INVESTIGATION_FILES, WRITING_EVENTS } from './constants';
+import { LESSONS, QUIZ_QUESTIONS, PUZZLE_LEVELS, INVESTIGATION_FILES, WRITING_EVENTS, HOAX_POOL_DEFAULT } from './constants';
 import { loadAppData, saveAppData } from './services/firebase';
 import { Copyright, Tv } from 'lucide-react';
 
@@ -21,12 +21,13 @@ const App: React.FC = () => {
   const [student, setStudent] = useState<Student | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
+  // States yang bisa diedit Admin
   const [lessons, setLessons] = useState<Lesson[]>(LESSONS);
   const [quizzes, setQuizzes] = useState<Question[]>(QUIZ_QUESTIONS);
   const [puzzles, setPuzzles] = useState<PuzzleLevel[]>(PUZZLE_LEVELS);
   const [investigations, setInvestigations] = useState<InvestigationData[]>(INVESTIGATION_FILES);
   const [writingEvents, setWritingEvents] = useState<WritingEvent[]>(WRITING_EVENTS);
-  const [hoaxPool, setHoaxPool] = useState<HoaxPoolItem[]>([]);
+  const [hoaxPool, setHoaxPool] = useState<HoaxPoolItem[]>(HOAX_POOL_DEFAULT);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,13 +40,6 @@ const App: React.FC = () => {
           if (data.investigations) setInvestigations(data.investigations);
           if (data.writingEvents) setWritingEvents(data.writingEvents);
           if (data.hoaxPool) setHoaxPool(data.hoaxPool);
-        } else {
-            // Initial fallback for hoax pool if cloud is empty
-            const initialHoax = [
-                { id: 'h1', text: "Makan Mie Instan Tiap Hari Bikin Umur 100 Tahun!", isHoax: true },
-                { id: 'f1', text: "BMKG: Waspada Potensi Hujan Lebat Sore Ini", isHoax: false }
-            ];
-            setHoaxPool(initialHoax);
         }
       } catch (err) {
         console.error("Gagal sinkron awal:", err);
@@ -159,7 +153,6 @@ const App: React.FC = () => {
           </motion.div>
         </AnimatePresence>
 
-        {/* PERSISTENT COPYRIGHT FOOTER */}
         {currentView !== 'HOAX_SHOOTER' && (
           <div className="fixed bottom-0 right-0 p-2 md:p-4 z-[999] pointer-events-none no-print">
             <div className="bg-white/80 backdrop-blur-md border-2 border-black px-3 py-1.5 md:px-5 md:py-2 rounded-full shadow-lg flex items-center space-x-2">
