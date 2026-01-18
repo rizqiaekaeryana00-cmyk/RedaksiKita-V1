@@ -29,20 +29,26 @@ const App: React.FC = () => {
   // Load data dari Firebase saat startup
   useEffect(() => {
     const fetchData = async () => {
-      const data = await loadAppData();
-      if (data) {
-        if (data.lessons) setLessons(data.lessons);
-        if (data.quizzes) setQuizzes(data.quizzes);
-        if (data.puzzles) setPuzzles(data.puzzles);
-        if (data.investigations) setInvestigations(data.investigations);
+      try {
+        const data = await loadAppData();
+        if (data) {
+          if (data.lessons) setLessons(data.lessons);
+          if (data.quizzes) setQuizzes(data.quizzes);
+          if (data.puzzles) setPuzzles(data.puzzles);
+          if (data.investigations) setInvestigations(data.investigations);
+        }
+      } catch (err) {
+        console.error("Gagal sinkron awal:", err);
+      } finally {
+        setIsLoaded(true);
       }
-      setIsLoaded(true);
     };
     fetchData();
   }, []);
 
   // Fungsi Helper untuk Update dan Sync
   const updateContent = async (type: string, newData: any) => {
+    // 1. Update State Lokal dulu agar UI responsif
     let updatedLessons = lessons;
     let updatedQuizzes = quizzes;
     let updatedPuzzles = puzzles;
@@ -53,6 +59,7 @@ const App: React.FC = () => {
     if (type === 'PUZZLE') { updatedPuzzles = newData; setPuzzles(newData); }
     if (type === 'INVESTIGATION') { updatedInvestigations = newData; setInvestigations(newData); }
 
+    // 2. Kirim ke Firebase Cloud
     await saveAppData({
       lessons: updatedLessons,
       quizzes: updatedQuizzes,
@@ -72,7 +79,13 @@ const App: React.FC = () => {
   };
 
   const renderView = () => {
-    if (!isLoaded) return <div className="h-screen flex items-center justify-center font-black">MEMUAT DATABASE...</div>;
+    if (!isLoaded) return (
+      <div className="h-screen flex flex-col items-center justify-center bg-[#FFD600] space-y-4">
+        <div className="w-16 h-16 border-8 border-black border-t-[#FF3D00] rounded-full animate-spin"></div>
+        <p className="font-black uppercase italic tracking-tighter">Sinkronisasi Cloud...</p>
+      </div>
+    );
+
     if (currentView === 'LOGIN') return <Login onLogin={handleLogin} />;
     if (!student) return <Login onLogin={handleLogin} />;
 

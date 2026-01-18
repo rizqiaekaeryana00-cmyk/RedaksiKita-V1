@@ -2,10 +2,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-/**
- * Konfigurasi Firebase Asli Anda
- * Ini menghubungkan aplikasi langsung ke project: redaksikita-v1-39aac
- */
 const firebaseConfig = {
   apiKey: "AIzaSyC921tDPwf-HWof4CaZTVHvbt4lmayvIrQ",
   authDomain: "redaksikita-v1-39aac.firebaseapp.com",
@@ -15,48 +11,46 @@ const firebaseConfig = {
   appId: "1:33254277142:web:80da5a6856e8802b8db537"
 };
 
-let db: any = null;
+// Inisialisasi Firebase secara langsung
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-try {
-  // Inisialisasi Firebase
-  const app = initializeApp(firebaseConfig);
-  db = getFirestore(app);
-  console.log("🔥 Firebase Terkoneksi: REDaksi KITA v1 siap digunakan.");
-} catch (e) {
-  console.error("Gagal inisialisasi Firebase:", e);
-}
+console.log("🚀 Firebase System: Menghubungkan ke project redaksikita-v1-39aac...");
 
 /**
- * Menyimpan seluruh data aplikasi (Materi, Kuis, dll) ke Firestore
+ * Menyimpan seluruh data aplikasi ke Firestore
  */
 export const saveAppData = async (data: any) => {
-  if (!db) {
-    console.error("Database tidak siap.");
-    return;
-  }
   try {
-    // Menyimpan di koleksi 'app_content' dengan ID dokumen 'main'
-    await setDoc(doc(db, "app_content", "main"), data);
-    console.log("✅ Data Berhasil Disinkronkan ke Cloud Firebase");
-  } catch (e) {
-    console.error("❌ Gagal simpan ke Firebase:", e);
+    console.log("📤 Memulai sinkronisasi data ke Cloud...");
+    // Menggunakan ID dokumen 'main' di dalam koleksi 'app_content'
+    const docRef = doc(db, "app_content", "main");
+    await setDoc(docRef, data, { merge: true });
+    console.log("✅ Sinkronisasi Berhasil: Data tersimpan di Cloud Firestore.");
+    return true;
+  } catch (e: any) {
+    console.error("❌ Gagal simpan ke Firebase. Pastikan Security Rules diizinkan!", e);
+    alert("Gagal Sinkron: " + e.message);
+    return false;
   }
 };
 
 /**
- * Mengambil data aplikasi dari Firestore saat aplikasi pertama kali dibuka
+ * Mengambil data aplikasi dari Firestore
  */
 export const loadAppData = async () => {
-  if (!db) return null;
   try {
-    const snap = await getDoc(doc(db, "app_content", "main"));
+    console.log("📥 Mengunduh data dari Cloud...");
+    const docRef = doc(db, "app_content", "main");
+    const snap = await getDoc(docRef);
     if (snap.exists()) {
-      console.log("📦 Data Berhasil Dimuat dari Cloud");
+      console.log("📦 Data Cloud ditemukan dan diterapkan.");
       return snap.data();
     }
+    console.warn("⚠️ Data Cloud kosong, menggunakan data default.");
     return null;
-  } catch (e) {
-    console.error("❌ Gagal mengambil data dari Firebase:", e);
+  } catch (e: any) {
+    console.error("❌ Gagal memuat data dari Firebase:", e);
     return null;
   }
 };
