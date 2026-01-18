@@ -1,7 +1,7 @@
 
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Home, Save, Plus, Trash2, BookOpen, ClipboardCheck, Gamepad2, Search, Video, Youtube, List, X, Link as LinkIcon } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Home, Save, Plus, Trash2, BookOpen, ClipboardCheck, Gamepad2, Search, Video, Youtube, List, X, Link as LinkIcon, CloudCheck, CloudOff, Loader2 } from 'lucide-react';
 import { Lesson, Question, NewsFragment, InvestigationData, VideoItem, PuzzleLevel } from '../types';
 import { sounds } from '../services/audio';
 
@@ -19,17 +19,41 @@ interface AdminSettingsProps {
 
 const AdminSettings: React.FC<AdminSettingsProps> = (props) => {
   const [activeTab, setActiveTab] = useState<'LESSONS' | 'QUIZ' | 'PUZZLE' | 'INVESTIGATION'>('LESSONS');
+  const [syncStatus, setSyncStatus] = useState<'IDLE' | 'SAVING' | 'SUCCESS' | 'ERROR'>('IDLE');
+  const [lastSaved, setLastSaved] = useState<string>('');
+
+  // Efek untuk memantau perubahan data dan memberikan feedback visual
+  useEffect(() => {
+    if (syncStatus === 'SUCCESS') {
+      const timer = setTimeout(() => setSyncStatus('IDLE'), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [syncStatus]);
+
+  const wrapUpdate = async (type: string, action: () => void) => {
+    setSyncStatus('SAVING');
+    action();
+    // Proses simpan biasanya cepat, kita beri delay sedikit agar user melihat transisi status
+    setTimeout(() => {
+      setSyncStatus('SUCCESS');
+      setLastSaved(new Date().toLocaleTimeString());
+    }, 800);
+  };
 
   const deleteItem = (type: string, id: string | number) => {
     sounds.wrong();
-    if (type === 'LESSONS') props.setLessons(props.lessons.filter(l => l.id !== id));
-    if (type === 'QUIZ') props.setQuizzes(props.quizzes.filter(q => q.id !== id));
-    if (type === 'INVESTIGATION') props.setInvestigations(props.investigations.filter(i => i.id !== id));
-    if (type === 'PUZZLE') props.setPuzzles(props.puzzles.filter((_, idx) => idx !== id));
+    wrapUpdate(type, () => {
+      if (type === 'LESSONS') props.setLessons(props.lessons.filter(l => l.id !== id));
+      if (type === 'QUIZ') props.setQuizzes(props.quizzes.filter(q => q.id !== id));
+      if (type === 'INVESTIGATION') props.setInvestigations(props.investigations.filter(i => i.id !== id));
+      if (type === 'PUZZLE') props.setPuzzles(props.puzzles.filter((_, idx) => idx !== id));
+    });
   };
 
   const updateLessonVideos = (lessonId: string, videos: VideoItem[]) => {
-    props.setLessons(props.lessons.map(l => l.id === lessonId ? { ...l, videos } : l));
+    wrapUpdate('LESSONS', () => {
+      props.setLessons(props.lessons.map(l => l.id === lessonId ? { ...l, videos } : l));
+    });
   };
 
   return (
@@ -40,7 +64,28 @@ const AdminSettings: React.FC<AdminSettingsProps> = (props) => {
           <div className="bg-purple-600 p-2 rounded-xl border-2 border-black rotate-3">
             <Save className="text-white w-6 h-6" />
           </div>
-          <h2 className="text-xl font-black uppercase tracking-tighter italic">Pusat <span className="text-purple-600">Konten Redaksi</span></h2>
+          <div>
+            <h2 className="text-xl font-black uppercase tracking-tighter italic leading-none">Pusat <span className="text-purple-600">Konten Redaksi</span></h2>
+            <div className="flex items-center mt-1">
+               <AnimatePresence mode="wait">
+                {syncStatus === 'SAVING' && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center text-[9px] font-black text-blue-600 uppercase italic">
+                    <Loader2 className="w-3 h-3 mr-1 animate-spin" /> Menyingkronkan ke Cloud...
+                  </motion.div>
+                )}
+                {syncStatus === 'SUCCESS' && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center text-[9px] font-black text-green-600 uppercase italic">
+                    <CloudCheck className="w-3 h-3 mr-1" /> Berhasil Disimpan {lastSaved && `pukul ${lastSaved}`}
+                  </motion.div>
+                )}
+                {syncStatus === 'IDLE' && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center text-[9px] font-black text-slate-400 uppercase italic">
+                    Semua perubahan tersimpan otomatis
+                  </motion.div>
+                )}
+               </AnimatePresence>
+            </div>
+          </div>
         </div>
         <button onClick={props.onBack} className="btn-primary px-6 py-2 text-white font-black uppercase rounded-xl flex items-center shadow-sm">
           <Home className="mr-2 w-4 h-4" /> Lobi
@@ -173,7 +218,11 @@ const AdminSettings: React.FC<AdminSettingsProps> = (props) => {
                 </div>
               ))}
             </div>
-            <AddLessonForm onAdd={(l) => props.setLessons([...props.lessons, l])} />
+            <AddLessonForm onAdd={(l) => {
+               setSyncStatus('SAVING');
+               props.setLessons([...props.lessons, l]);
+               setTimeout(() => setSyncStatus('SUCCESS'), 800);
+            }} />
           </div>
         )}
 

@@ -21,6 +21,15 @@ const WritingDesk = ({ onBack, studentName }: any) => {
   const next = () => { sounds.click(); setStep(s => s + 1); };
   const prev = () => { sounds.click(); setStep(s => s - 1); };
 
+  const handleSelectEvent = (ev: any) => {
+    sounds.success();
+    setSelectedEvent(ev);
+    // Otomatis lanjut ke step berikutnya setelah delay singkat untuk feel visual
+    setTimeout(() => {
+      setStep(2);
+    }, 300);
+  };
+
   const handleClinic = async () => {
     setIsChecking(true);
     sounds.click();
@@ -51,25 +60,29 @@ const WritingDesk = ({ onBack, studentName }: any) => {
     switch(step) {
       case 1:
         return (
-          <div className="space-y-8 text-center">
-            <h2 className="text-3xl font-black uppercase text-black italic">Tentukan Peristiwa</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+          <div className="space-y-8 text-center py-4">
+            <div className="mb-2">
+               <h2 className="text-3xl font-black uppercase text-black italic leading-none mb-2">Pilih Peristiwa</h2>
+               <p className="text-sm font-bold text-slate-400">Klik salah satu peristiwa di bawah untuk mulai meliput!</p>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
               {WRITING_EVENTS.map(ev => (
-                <button
+                <motion.button
                   key={ev.id}
-                  onClick={() => { setSelectedEvent(ev); sounds.click(); }}
-                  className={`p-8 rounded-[2.5rem] border-4 border-black flex flex-col items-center space-y-4 transition-all active:translate-y-2 active:shadow-none ${selectedEvent?.id === ev.id ? 'bg-[#FF3D00] text-white scale-110 shadow-[10px_10px_0px_#000]' : 'bg-white text-black hover:bg-slate-50 shadow-[6px_6px_0px_#000]'}`}
+                  whileHover={{ scale: 1.05, y: -5 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleSelectEvent(ev)}
+                  className={`p-8 rounded-[2.5rem] border-4 border-black flex flex-col items-center space-y-4 transition-all relative overflow-hidden group ${selectedEvent?.id === ev.id ? 'bg-[#FF3D00] text-white shadow-[10px_10px_0px_#000]' : 'bg-white text-black hover:bg-[#F1F5F9] shadow-[6px_6px_0px_#000]'}`}
                 >
-                  <span className="text-6xl">{ev.icon}</span>
-                  <span className="font-black uppercase tracking-tight">{ev.title}</span>
-                </button>
+                  <div className="absolute top-0 left-0 w-full h-1 bg-black/5 group-hover:bg-black/10 transition-colors"></div>
+                  <span className="text-6xl group-hover:scale-110 transition-transform">{ev.icon}</span>
+                  <span className="font-black uppercase tracking-tight text-sm md:text-base">{ev.title}</span>
+                </motion.button>
               ))}
             </div>
-            {selectedEvent && (
-              <motion.button initial={{ scale: 0 }} animate={{ scale: 1 }} onClick={next} className="btn-primary px-16 py-5 text-white font-black uppercase text-xl rounded-2xl shadow-[8px_8px_0px_#000]">
-                Mulai Menulis!
-              </motion.button>
-            )}
+            <div className="pt-8">
+               <p className="text-[10px] font-black uppercase text-slate-300 tracking-[0.2em]">Pilihanmu akan menentukan alur cerita beritamu</p>
+            </div>
           </div>
         );
       case 2:
@@ -77,11 +90,14 @@ const WritingDesk = ({ onBack, studentName }: any) => {
           <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 border-b-4 border-black pb-4">
                <div>
-                 <h2 className="text-2xl font-black uppercase text-black">Panduan 5W + 1H</h2>
-                 <p className="text-sm font-bold text-slate-500">Isi tiap kolom dengan fakta yang kamu temukan.</p>
+                 <div className="flex items-center space-x-2 mb-1">
+                    <span className="text-2xl">{selectedEvent?.icon}</span>
+                    <h2 className="text-2xl font-black uppercase text-black">Panduan 5W + 1H</h2>
+                 </div>
+                 <p className="text-sm font-bold text-slate-500">Lengkapi data liputan tentang <span className="text-[#FF3D00] uppercase">{selectedEvent?.title}</span>.</p>
                </div>
                <div className="flex space-x-2">
-                 <button onClick={() => handleAiClue('5W1H')} className="bg-[#FFD600] px-5 py-3 rounded-2xl border-4 border-black flex items-center text-xs font-black shadow-[4px_4px_0px_#000] hover:scale-105 transition-all">
+                 <button onClick={() => handleAiClue('5W1H')} className="bg-[#FFD600] px-5 py-3 rounded-2xl border-4 border-black flex items-center text-xs font-black shadow-[4px_4px_0px_#000] hover:scale-105 transition-all active:translate-y-1 active:shadow-none">
                     <Sparkles className="w-5 h-5 mr-2 text-black" /> <span className="text-black">SARAN AI</span>
                  </button>
                </div>
@@ -137,11 +153,11 @@ const WritingDesk = ({ onBack, studentName }: any) => {
               ))}
             </div>
             <div className="flex justify-between mt-12 pt-6 border-t-4 border-black">
-              <button onClick={prev} className="font-black uppercase flex items-center text-black px-6 py-2 hover:bg-slate-100 rounded-xl transition-colors"><ArrowLeft className="mr-2"/> Kembali</button>
+              <button onClick={prev} className="font-black uppercase flex items-center text-black px-6 py-2 hover:bg-slate-100 rounded-xl transition-colors"><ArrowLeft className="mr-2"/> Kembali Pilih Tema</button>
               <button 
                 onClick={next} 
                 disabled={!answers.what || !answers.who}
-                className="bg-[#FF3D00] text-white px-12 py-4 border-4 border-black rounded-2xl font-black uppercase text-lg shadow-[6px_6px_0px_#000] disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all"
+                className="bg-[#FF3D00] text-white px-12 py-4 border-4 border-black rounded-2xl font-black uppercase text-lg shadow-[6px_6px_0px_#000] disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all active:translate-y-1 active:shadow-none"
               >
                 Susun Berita <ArrowRight className="ml-2 inline-block w-5 h-5"/>
               </button>
@@ -149,7 +165,7 @@ const WritingDesk = ({ onBack, studentName }: any) => {
           </div>
         );
       case 3:
-        const fullDraft = `DEMAK - Telah terjadi ${selectedEvent.title} yang dilaksanakan di ${answers.where || "[Lokasi]"} pada hari ${answers.when || "[Waktu]"}. Peristiwa ini melibatkan ${answers.who || "[Pihak Terkait]"}. Hal ini terjadi karena ${answers.why || "[Alasan]"}. ${answers.how || "[Kronologi kejadian]"}.`;
+        const fullDraft = `DEMAK - Telah terjadi ${selectedEvent?.title} yang dilaksanakan di ${answers.where || "[Lokasi]"} pada hari ${answers.when || "[Waktu]"}. Peristiwa ini melibatkan ${answers.who || "[Pihak Terkait]"}. Hal ini terjadi karena ${answers.why || "[Alasan]"}. ${answers.how || "[Kronologi kejadian]"}.`;
         return (
           <div className="space-y-6">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4 border-b-4 border-black pb-4">
@@ -203,7 +219,7 @@ const WritingDesk = ({ onBack, studentName }: any) => {
 
             <div className="flex justify-between mt-12 pt-6 border-t-4 border-black">
               <button onClick={prev} className="font-black uppercase flex items-center text-black px-6 py-2 hover:bg-slate-100 rounded-xl transition-colors"><ArrowLeft className="mr-2"/> Kembali</button>
-              <button onClick={handleFinish} className="bg-[#4CAF50] text-white px-16 py-5 border-4 border-black rounded-2xl font-black uppercase text-xl shadow-[8px_8px_0px_#000] hover:scale-105 transition-all">
+              <button onClick={handleFinish} className="bg-[#4CAF50] text-white px-16 py-5 border-4 border-black rounded-2xl font-black uppercase text-xl shadow-[8px_8px_0px_#000] hover:scale-105 transition-all active:translate-y-1 active:shadow-none">
                 Terbitkan! <Printer className="ml-3 w-6 h-6 inline-block"/>
               </button>
             </div>
@@ -241,12 +257,12 @@ const WritingDesk = ({ onBack, studentName }: any) => {
               <div className="mb-8">
                 <h2 className="text-4xl font-black uppercase leading-tight mb-6 text-black border-l-8 border-[#FF3D00] pl-6 italic">{answers.title || "SISWA SMPN 3 BONANG RAIH PRESTASI"}</h2>
                 <div className="aspect-video w-full bg-white border-4 border-black flex items-center justify-center mb-6 shadow-md">
-                  <span className="text-9xl grayscale opacity-80">{selectedEvent.icon}</span>
+                  <span className="text-9xl grayscale opacity-80">{selectedEvent?.icon}</span>
                 </div>
                 <div className="columns-1 md:columns-2 gap-8 text-sm font-bold leading-relaxed text-black text-justify">
                   <p>
                     <span className="font-black uppercase bg-black text-white px-2 py-1 mr-2 text-xs">DEMAK, REDaksi KITA</span> 
-                    Telah terjadi {selectedEvent.title} yang dilaksanakan di {answers.where || "[Lokasi]"} pada hari {answers.when || "[Waktu]"}. 
+                    Telah terjadi {selectedEvent?.title} yang dilaksanakan di {answers.where || "[Lokasi]"} pada hari {answers.when || "[Waktu]"}. 
                     Peristiwa membanggakan ini melibatkan {answers.who || "beberapa pihak terkait"} dan berjalan dengan sangat antusias.
                   </p>
                   <p className="mt-4">
@@ -271,7 +287,7 @@ const WritingDesk = ({ onBack, studentName }: any) => {
               <button onClick={() => window.print()} className="bg-white text-black px-10 py-4 rounded-2xl border-4 border-black font-black uppercase flex items-center shadow-[6px_6px_0px_#000] hover:scale-105 transition-all">
                 <Printer className="mr-3 w-6 h-6" /> Cetak Kabar
               </button>
-              <button onClick={onBack} className="bg-[#FF3D00] text-white px-12 py-4 border-4 border-black rounded-2xl font-black uppercase shadow-[8px_8px_0px_#000] hover:scale-105 transition-all">Lobi Redaksi</button>
+              <button onClick={onBack} className="bg-[#FF3D00] text-white px-12 py-4 border-4 border-black rounded-2xl font-black uppercase shadow-[8px_8px_0px_#000] hover:scale-105 transition-all active:translate-y-1 active:shadow-none">Lobi Redaksi</button>
             </div>
           </div>
         );
@@ -303,7 +319,7 @@ const WritingDesk = ({ onBack, studentName }: any) => {
       </div>
 
       <div className="mt-8 text-xs font-black uppercase text-slate-400">
-        Tips: Gunakan Klinik Bahasa untuk memperbaiki tata bahasa karyamu!
+        Tips: Klik salah satu ikon peristiwa untuk langsung memulai liputan!
       </div>
     </div>
   );
