@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AppView, Student, Lesson, Question, NewsFragment, InvestigationData, PuzzleLevel } from './types';
+import { AppView, Student, Lesson, Question, NewsFragment, InvestigationData, PuzzleLevel, WritingEvent, HoaxPoolItem } from './types';
 import Login from './components/Login';
 import Lobby from './components/Lobby';
 import BriefingRoom from './components/BriefingRoom';
@@ -12,7 +12,7 @@ import InvestigationRoom from './components/InvestigationRoom';
 import HoaxShooter from './components/HoaxShooter';
 import Navbar from './components/Navbar';
 import AdminSettings from './components/AdminSettings';
-import { LESSONS, QUIZ_QUESTIONS, PUZZLE_LEVELS, INVESTIGATION_FILES } from './constants';
+import { LESSONS, QUIZ_QUESTIONS, PUZZLE_LEVELS, INVESTIGATION_FILES, WRITING_EVENTS } from './constants';
 import { loadAppData, saveAppData } from './services/firebase';
 import { Copyright, Tv } from 'lucide-react';
 
@@ -25,6 +25,8 @@ const App: React.FC = () => {
   const [quizzes, setQuizzes] = useState<Question[]>(QUIZ_QUESTIONS);
   const [puzzles, setPuzzles] = useState<PuzzleLevel[]>(PUZZLE_LEVELS);
   const [investigations, setInvestigations] = useState<InvestigationData[]>(INVESTIGATION_FILES);
+  const [writingEvents, setWritingEvents] = useState<WritingEvent[]>(WRITING_EVENTS);
+  const [hoaxPool, setHoaxPool] = useState<HoaxPoolItem[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,6 +37,15 @@ const App: React.FC = () => {
           if (data.quizzes) setQuizzes(data.quizzes);
           if (data.puzzles) setPuzzles(data.puzzles);
           if (data.investigations) setInvestigations(data.investigations);
+          if (data.writingEvents) setWritingEvents(data.writingEvents);
+          if (data.hoaxPool) setHoaxPool(data.hoaxPool);
+        } else {
+            // Initial fallback for hoax pool if cloud is empty
+            const initialHoax = [
+                { id: 'h1', text: "Makan Mie Instan Tiap Hari Bikin Umur 100 Tahun!", isHoax: true },
+                { id: 'f1', text: "BMKG: Waspada Potensi Hujan Lebat Sore Ini", isHoax: false }
+            ];
+            setHoaxPool(initialHoax);
         }
       } catch (err) {
         console.error("Gagal sinkron awal:", err);
@@ -50,17 +61,23 @@ const App: React.FC = () => {
     let updatedQuizzes = quizzes;
     let updatedPuzzles = puzzles;
     let updatedInvestigations = investigations;
+    let updatedWritingEvents = writingEvents;
+    let updatedHoaxPool = hoaxPool;
 
     if (type === 'LESSONS') { updatedLessons = newData; setLessons(newData); }
     if (type === 'QUIZ') { updatedQuizzes = newData; setQuizzes(newData); }
     if (type === 'PUZZLE') { updatedPuzzles = newData; setPuzzles(newData); }
     if (type === 'INVESTIGATION') { updatedInvestigations = newData; setInvestigations(newData); }
+    if (type === 'WRITING_EVENTS') { updatedWritingEvents = newData; setWritingEvents(newData); }
+    if (type === 'HOAX_POOL') { updatedHoaxPool = newData; setHoaxPool(newData); }
 
     await saveAppData({
       lessons: updatedLessons,
       quizzes: updatedQuizzes,
       puzzles: updatedPuzzles,
-      investigations: updatedInvestigations
+      investigations: updatedInvestigations,
+      writingEvents: updatedWritingEvents,
+      hoaxPool: updatedHoaxPool
     });
   };
 
@@ -90,9 +107,9 @@ const App: React.FC = () => {
       case 'BRIEFING': return <BriefingRoom lessons={lessons} onBack={() => setCurrentView('LOBBY')} />;
       case 'ARENA': return <NewsArena puzzleLevels={puzzles} onBack={() => setCurrentView('LOBBY')} />;
       case 'EVALUATION': return <EvaluationDesk quizQuestions={quizzes} onBack={() => setCurrentView('LOBBY')} />;
-      case 'WRITING_DESK': return <WritingDesk onBack={() => setCurrentView('LOBBY')} studentName={student.name} />;
+      case 'WRITING_DESK': return <WritingDesk onBack={() => setCurrentView('LOBBY')} studentName={student.name} writingEvents={writingEvents} />;
       case 'INVESTIGATION': return <InvestigationRoom investigationFiles={investigations} onBack={() => setCurrentView('LOBBY')} />;
-      case 'HOAX_SHOOTER': return <HoaxShooter onBack={() => setCurrentView('LOBBY')} />;
+      case 'HOAX_SHOOTER': return <HoaxShooter onBack={() => setCurrentView('LOBBY')} hoaxPoolItems={hoaxPool} />;
       case 'ADMIN_SETTINGS':
         return (
           <AdminSettings 
@@ -100,6 +117,8 @@ const App: React.FC = () => {
             quizzes={quizzes} setQuizzes={(q) => updateContent('QUIZ', q)}
             puzzles={puzzles} setPuzzles={(p) => updateContent('PUZZLE', p)}
             investigations={investigations} setInvestigations={(i) => updateContent('INVESTIGATION', i)}
+            writingEvents={writingEvents} setWritingEvents={(e) => updateContent('WRITING_EVENTS', e)}
+            hoaxPool={hoaxPool} setHoaxPool={(h) => updateContent('HOAX_POOL', h)}
             onBack={() => setCurrentView('LOBBY')} 
           />
         );

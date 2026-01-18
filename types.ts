@@ -47,3 +47,15 @@ export interface Lesson {
   videos: VideoItem[];
   meta: string;
 }
+
+export interface WritingEvent {
+  id: string;
+  title: string;
+  icon: string;
+}
+
+export interface HoaxPoolItem {
+  id: string;
+  text: string;
+  isHoax: boolean;
+}
