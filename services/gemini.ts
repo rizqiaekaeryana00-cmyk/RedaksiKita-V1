@@ -1,14 +1,14 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-// API Key obtained from process.env.API_KEY
+// Inisialisasi API menggunakan variabel lingkungan
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
 
 export async function checkLanguage(text: string): Promise<string> {
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: [{ role: 'user', parts: [{ text: `Bertindak sebagai editor bahasa. Periksa apakah teks ini sudah menggunakan Bahasa Indonesia yang baku dan ejaan yang benar (PUEBI). Berikan saran perbaikan singkat: "${text}"` }] }],
+      contents: `Bertindak sebagai editor bahasa. Periksa apakah teks ini sudah menggunakan Bahasa Indonesia yang baku dan ejaan yang benar (PUEBI). Berikan saran perbaikan singkat: "${text}"`,
     });
     return response.text || "Teks terlihat bagus!";
   } catch (error) {
@@ -21,7 +21,7 @@ export async function getWritingClue(part: string, content: string): Promise<str
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: [{ role: 'user', parts: [{ text: `Siswa sedang menulis bagian "${part}" berita tentang "${content}". Berikan 1 kalimat saran kreatif agar tulisannya lebih menarik.` }] }],
+      contents: `Siswa sedang menulis bagian "${part}" berita tentang "${content}". Berikan 1 kalimat saran kreatif agar tulisannya lebih menarik.`,
     });
     return response.text || "Coba tambahkan detail suasana di sana.";
   } catch {
@@ -33,7 +33,7 @@ export async function getLiveNewsHeadlines(): Promise<string[]> {
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: [{ role: 'user', parts: [{ text: "Buatkan 5 headline berita singkat dan menarik (maksimal 10 kata) tentang prestasi siswa, inovasi teknologi, atau kegiatan sekolah dalam Bahasa Indonesia. Format sebagai JSON array string." }] }],
+      contents: "Buatkan 5 headline berita singkat dan menarik (maksimal 10 kata) tentang prestasi siswa, inovasi teknologi, atau kegiatan sekolah dalam Bahasa Indonesia. Format sebagai JSON array string.",
       config: { responseMimeType: "application/json" },
     });
     return response.text ? JSON.parse(response.text) : ["REDaksi KITA: Media Pembelajaran Menulis Berita Terpercaya!"];
@@ -47,7 +47,7 @@ export async function getEditorFeedback(answer: string, correct: boolean): Promi
     const prompt = `Anda adalah seorang Pemimpin Redaksi senior. Berikan feedback singkat (maks 2 kalimat) untuk siswa yang ${correct ? 'menjawab benar' : 'menjawab salah'} tentang: ${answer}. Gunakan nada yang menyemangati dan profesional.`;
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      contents: prompt,
     });
     return response.text || (correct ? "Bagus! Teruskan bakat jurnalisismu!" : "Jangan menyerah, periksa kembali faktanya.");
   } catch {

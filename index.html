@@ -25,7 +25,6 @@
       .font-playful { font-family: 'Fredoka', sans-serif; }
       .text-black-bold { color: #000000; font-weight: 700; }
       
-      /* Pixar-style animations */
       .bounce-hover:hover {
         transform: scale(1.05) translateY(-5px);
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -54,7 +53,6 @@
         0% { transform: translateX(100%); }
         100% { transform: translateX(-100%); }
       }
-      /* Custom Scrollbar */
       ::-webkit-scrollbar { width: 12px; }
       ::-webkit-scrollbar-track { background: #f1f1f1; }
       ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; border: 3px solid #f1f1f1; }
@@ -68,16 +66,15 @@
     "@google/genai": "https://esm.sh/@google/genai@^1.37.0",
     "framer-motion": "https://esm.sh/framer-motion@^12.26.2",
     "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "canvas-confetti": "https://esm.sh/canvas-confetti@^1.9.4",
     "vite": "https://esm.sh/vite@^7.3.1",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
-    "canvas-confetti": "https://esm.sh/canvas-confetti@^1.9.4"
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
   }
 }
 </script>
 </head>
   <body>
     <div id="root"></div>
-    <!-- Entry point for Vite build -->
-    <script type="module" src="./index.tsx"></script>
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>
