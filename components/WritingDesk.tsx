@@ -143,32 +143,32 @@ const WritingDesk: React.FC<WritingDeskProps> = ({ onBack, studentName, writingE
         );
       case 4:
         return (
-          <div className="flex flex-col items-center py-4 space-y-6 md:space-y-8 w-full">
+          <div className="flex flex-col items-center py-4 space-y-6 md:space-y-10 w-full px-2">
             <h1 className="text-2xl md:text-5xl font-black text-black uppercase italic tracking-tighter text-center leading-none">Hasil Karya Jurnalis</h1>
             
             {/* Paper Preview - Ultra Responsive Scaling */}
-            <div className="w-full max-w-2xl bg-white border-4 md:border-8 border-black p-5 md:p-12 shadow-[8px_8px_0px_#000] md:shadow-[24px_24px_0px_#000] rounded-sm relative overflow-hidden flex flex-col">
-                {/* Responsive Decoration */}
-                <div className="absolute top-0 right-0 w-6 md:w-16 h-full bg-black/5 flex flex-col justify-around py-10 pointer-events-none opacity-40">
+            <div className="w-full max-w-[95vw] md:max-w-2xl bg-white border-4 md:border-8 border-black p-5 md:p-12 shadow-[8px_8px_0px_#000] md:shadow-[16px_16px_0px_#000] rounded-sm relative overflow-hidden flex flex-col">
+                {/* Responsive Decoration Decoration */}
+                <div className="absolute top-0 right-0 w-6 md:w-16 h-full bg-black/5 flex flex-col justify-around py-10 pointer-events-none opacity-30">
                    <div className="h-0.5 w-full bg-black/10"></div>
                    <div className="h-0.5 w-full bg-black/10"></div>
                    <div className="h-0.5 w-full bg-black/10"></div>
                 </div>
 
-                <div className="text-center border-b-4 md:border-b-8 border-black pb-4 md:pb-8 mb-6 md:mb-10">
-                  <h1 className="text-2xl sm:text-4xl md:text-7xl font-black uppercase italic text-[#FF3D00] tracking-tighter leading-none whitespace-normal">
+                <div className="text-center border-b-[3px] md:border-b-8 border-black pb-4 md:pb-8 mb-6 md:mb-10">
+                  <h1 className="text-xl sm:text-4xl md:text-7xl font-black uppercase italic text-[#FF3D00] tracking-tighter leading-none whitespace-nowrap overflow-hidden">
                     KABAR <span className="text-black">DEMAK</span>
                   </h1>
                 </div>
                 
                 <div className="space-y-4 md:space-y-10 relative z-10">
-                  <h2 className="text-lg md:text-4xl font-black uppercase text-black border-l-[6px] md:border-l-[12px] border-[#FF3D00] pl-3 md:pl-8 italic leading-tight">
+                  <h2 className="text-md md:text-4xl font-black uppercase text-black border-l-[5px] md:border-l-[12px] border-[#FF3D00] pl-3 md:pl-8 italic leading-tight break-words">
                     {answers.title || "SISWA SMPN 3 BONANG RAIH PRESTASI"}
                   </h2>
                   
-                  <div className="text-[12px] md:text-lg font-bold text-justify text-black leading-relaxed space-y-3 md:space-y-4">
+                  <div className="text-[11px] md:text-lg font-bold text-justify text-black leading-relaxed space-y-3 md:space-y-4 break-words">
                     <p>
-                      <span className="font-black bg-black text-white px-2 py-0.5 mr-2 uppercase text-[9px] md:text-sm">DEMAK, REDAKSI KITA</span> 
+                      <span className="font-black bg-black text-white px-2 py-0.5 mr-2 uppercase text-[8px] md:text-sm inline-block">DEMAK, REDAKSI KITA</span> 
                       {answers.what || "Peristiwa menarik baru saja terjadi..."} dilaporkan berlangsung di {answers.where || "lokasi strategis"} yang melibatkan {answers.who || "pihak terkait"}. 
                     </p>
                     <p>
@@ -177,11 +177,11 @@ const WritingDesk: React.FC<WritingDeskProps> = ({ onBack, studentName, writingE
                   </div>
                   
                   <div className="border-t-[3px] md:border-t-4 border-black pt-5 md:pt-10 flex justify-between items-center mt-6">
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[8px] md:text-[11px] font-black uppercase text-slate-400 tracking-widest mb-1 truncate">Reporter Utama:</p>
-                      <p className="text-lg md:text-3xl font-black italic uppercase tracking-tight text-black truncate">{studentName}</p>
+                    <div className="min-w-0 flex-1 pr-2">
+                      <p className="text-[7px] md:text-[11px] font-black uppercase text-slate-400 tracking-widest mb-1 truncate">Reporter Utama:</p>
+                      <p className="text-sm md:text-3xl font-black italic uppercase tracking-tight text-black truncate">{studentName}</p>
                     </div>
-                    <div className="bg-[#FFD600] p-2 md:p-3 rounded-lg border-2 border-black rotate-3 shrink-0 ml-4">
+                    <div className="bg-[#FFD600] p-1.5 md:p-3 rounded-lg border-2 border-black rotate-3 shrink-0">
                        <CheckCircle className="w-5 h-5 md:w-8 md:h-8" />
                     </div>
                   </div>
@@ -190,9 +190,9 @@ const WritingDesk: React.FC<WritingDeskProps> = ({ onBack, studentName, writingE
 
             <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md px-4">
               <button onClick={() => window.print()} className="flex-1 bg-white text-black py-4 px-6 rounded-2xl border-[3px] border-black font-black uppercase text-[10px] md:text-xs shadow-[4px_4px_0px_#000] hover:bg-slate-50 flex items-center justify-center">
-                <Printer className="w-4 h-4 mr-2 shrink-0" /> CETAK FISIK
+                <Printer className="w-4 h-4 mr-2" /> CETAK FISIK
               </button>
-              <button onClick={onBack} className="flex-1 bg-[#FF3D00] text-white py-4 px-6 rounded-2xl border-[3px] border-black font-black uppercase text-[10px] md:text-xs shadow-[4px_4px_0px_#000] hover:scale-[1.02] transition-all">
+              <button onClick={onBack} className="flex-1 bg-[#FF3D00] text-white py-4 px-6 rounded-2xl border-[3px] border-black font-black uppercase text-[10px] md:text-xs shadow-[4px_4px_0px_#000] hover:scale-102 transition-all">
                 KEMBALI KE LOBI
               </button>
             </div>
@@ -202,7 +202,7 @@ const WritingDesk: React.FC<WritingDeskProps> = ({ onBack, studentName, writingE
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] p-3 md:p-8 flex flex-col items-center pb-20">
+    <div className="min-h-screen bg-[#F8FAFC] p-3 md:p-8 flex flex-col items-center pb-20 overflow-x-hidden">
       {/* Responsive Navbar Writing Desk */}
       <div className="w-full max-w-6xl flex justify-between items-center mb-6 bg-white p-3 md:p-6 rounded-2xl md:rounded-[2.5rem] border-4 border-black shadow-[6px_6px_0px_#000]">
         <button onClick={onBack} className="flex items-center font-black uppercase text-[10px] md:text-sm text-black hover:text-[#FF3D00] transition-colors">
@@ -218,7 +218,7 @@ const WritingDesk: React.FC<WritingDeskProps> = ({ onBack, studentName, writingE
       </div>
       
       {/* Central Content Box */}
-      <div className="w-full max-w-6xl bg-white rounded-[2rem] md:rounded-[4rem] border-4 border-black p-5 md:p-16 shadow-[10px_10px_0px_#000] mb-10 overflow-hidden">
+      <div className="w-full max-w-6xl bg-white rounded-[2rem] md:rounded-[4rem] border-4 border-black p-4 md:p-16 shadow-[10px_10px_0px_#000] mb-10 overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.div
             key={step}
